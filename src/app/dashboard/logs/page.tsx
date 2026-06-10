@@ -134,7 +134,7 @@ export default function LogsPage() {
       {/* Terminal logs view */}
       <div className="flex-1 min-h-[400px] glass-panel rounded-2xl border border-white/5 overflow-hidden flex flex-col font-mono text-xs">
         <div className="px-6 py-3 border-b border-white/5 bg-slate-950 flex items-center justify-between text-slate-500">
-          <span>TORQI WORKER OUTPUT TERMINAL</span>
+          <span>TorQi Worker Output Terminal</span>
           <span>COUNT: {filteredLogs.length}</span>
         </div>
 

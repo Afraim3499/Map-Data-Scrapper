@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import Image from 'next/image';
 
 export default function DashboardLayout({
   children,
@@ -12,15 +11,8 @@ export default function DashboardLayout({
       <header className="border-b border-white/5 glass-panel py-4 px-6 sm:px-12 flex items-center justify-between sticky top-0 z-40">
         <div className="flex items-center gap-8">
           <Link href="/dashboard" className="flex items-center gap-3">
-            <Image 
-              src="/torqi-logo.jpg" 
-              alt="TorQi Logo" 
-              width={35} 
-              height={35} 
-              className="rounded border border-white/10"
-            />
             <h1 className="text-base font-extrabold tracking-wider text-white">
-              TORQI <span className="text-glow text-[#FF5C00] font-medium text-[10px] tracking-normal px-2 py-0.5 rounded-full bg-[#FF5C00]/10 border border-[#FF5C00]/20">TERRITORY BUILDER</span>
+              TorQi <span className="text-glow text-[#FF5C00] font-medium text-[10px] tracking-normal px-2 py-0.5 rounded-full bg-[#FF5C00]/10 border border-[#FF5C00]/20">TERRITORY BUILDER</span>
             </h1>
           </Link>
 

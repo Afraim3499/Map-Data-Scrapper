@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import Image from 'next/image';
 
 export const metadata = {
   title: 'TorQi Territory Builder | Sales Lead Intelligence',
@@ -52,18 +51,9 @@ export default function LandingPage() {
       {/* Header */}
       <header className="border-b border-white/5 glass-panel py-5 px-6 sm:px-12 flex items-center justify-between sticky top-0 z-50">
         <div className="flex items-center gap-3">
-          <Image 
-            src="/torqi-logo.jpg" 
-            alt="TorQi Logo" 
-            width={40} 
-            height={40} 
-            className="rounded border border-white/10"
-          />
-          <div>
-            <h1 className="text-lg font-extrabold tracking-wider text-white flex items-center gap-1.5">
-              TORQI <span className="text-glow text-[#FF5C00] font-medium text-xs tracking-normal px-2 py-0.5 rounded-full bg-[#FF5C00]/10 border border-[#FF5C00]/20">TERRITORY BUILDER</span>
-            </h1>
-          </div>
+          <h1 className="text-lg font-extrabold tracking-wider text-white flex items-center gap-1.5">
+            TorQi <span className="text-glow text-[#FF5C00] font-medium text-xs tracking-normal px-2 py-0.5 rounded-full bg-[#FF5C00]/10 border border-[#FF5C00]/20">TERRITORY BUILDER</span>
+          </h1>
         </div>
         <Link 
           href="/dashboard" 
