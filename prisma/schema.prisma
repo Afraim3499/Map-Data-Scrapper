@@ -1,0 +1,223 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String?
+  email     String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model Campaign {
+  id               String      @id @default(uuid())
+  name             String
+  state            String
+  businessCategory String      @map("business_category")
+  searchQueries    String      @map("search_queries") // Comma-separated or JSON array
+  status           String      @default("draft") // draft, queued, discovering_places, deduplicating, fetching_details, scanning_websites, running_js_scan, scoring_leads, generating_csv, complete, completed_with_warnings, failed, paused, cancelled
+  totalZips        Int         @default(0) @map("total_zips")
+  processedZips    Int         @default(0) @map("processed_zips")
+  totalPlaceIds    Int         @default(0) @map("total_place_ids")
+  uniquePlaceIds   Int         @default(0) @map("unique_place_ids")
+  totalEnriched    Int         @default(0) @map("total_enriched")
+  totalScanned     Int         @default(0) @map("total_scanned")
+  totalQualified   Int         @default(0) @map("total_qualified")
+  createdBy        String?     @map("created_by")
+  createdAt        DateTime    @default(now()) @map("created_at")
+  updatedAt        DateTime    @updatedAt @map("updated_at")
+  completedAt      DateTime?   @map("completed_at")
+
+  placesRaw        PlacesRaw[]
+  leads            Lead[]
+  exports          Export[]
+  jobs             Job[]
+
+  @@map("campaigns")
+}
+
+model PlacesRaw {
+  id             String   @id @default(uuid())
+  campaignId     String   @map("campaign_id")
+  campaign       Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  placeId        String   @map("place_id")
+  query          String
+  zipCode        String   @map("zip_code")
+  state          String
+  firstSeenAt    DateTime @default(now()) @map("first_seen_at")
+  duplicateCount Int      @default(0) @map("duplicate_count")
+
+  @@map("places_raw")
+}
+
+model Lead {
+  id                String   @id @default(uuid())
+  campaignId        String   @map("campaign_id")
+  campaign          Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  placeId           String   @map("place_id")
+  businessName      String   @map("business_name")
+  phoneRaw          String?  @map("phone_raw")
+  phoneFormatted    String?  @map("phone_formatted")
+  website           String?
+  address           String?
+  city              String?
+  state             String?
+  zip               String?
+  latitude          Float?
+  longitude         Float?
+  googleMapsUrl     String?  @map("google_maps_url")
+  businessStatus    String?  @map("business_status")
+  rating            Float?
+  reviewCount       Int?     @map("review_count")
+  primaryType       String?  @map("primary_type")
+  types             String? // Comma-separated or JSON array
+  hoursJson         String?  @map("hours_json") // JSON string of hours
+  hoursSummary      String?  @map("hours_summary")
+  mondayOpen        String?  @map("monday_open")
+  mondayClose       String?  @map("monday_close")
+  tuesdayOpen       String?  @map("tuesday_open")
+  tuesdayClose      String?  @map("tuesday_close")
+  wednesdayOpen     String?  @map("wednesday_open")
+  wednesdayClose    String?  @map("wednesday_close")
+  thursdayOpen      String?  @map("thursday_open")
+  thursdayClose     String?  @map("thursday_close")
+  fridayOpen        String?  @map("friday_open")
+  fridayClose       String?  @map("friday_close")
+  saturdayOpen      String?  @map("saturday_open")
+  saturdayClose     String?  @map("saturday_close")
+  sundayOpen        String?  @map("sunday_open")
+  sundayClose       String?  @map("sunday_close")
+  weekdayCloseTime  String?  @map("weekday_close_time")
+  closedSaturday    Boolean  @default(false) @map("closed_saturday")
+  closedSunday      Boolean  @default(false) @map("closed_sunday")
+  closesBefore6     Boolean  @default(false) @map("closes_before_6")
+  afterHoursGap     Boolean  @default(false) @map("after_hours_gap")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  websiteScans      WebsiteScan[]
+  leadScores        LeadScore[]
+
+  @@map("leads")
+}
+
+model WebsiteScan {
+  id                    String    @id @default(uuid())
+  leadId                String    @map("lead_id")
+  lead                  Lead      @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  scanStatus            String    @default("not_started") @map("scan_status") // not_started, scanning, scanned, no_website, timeout, blocked, ssl_error, invalid_url, failed, js_scan_required, completed_with_warnings
+  httpStatus            Int?      @map("http_status")
+  finalUrl              String?   @map("final_url")
+  homepageTitle         String?   @map("homepage_title")
+  pagesScanned          Int       @default(0) @map("pages_scanned")
+  appointmentPageFound  Boolean   @default(false) @map("appointment_page_found")
+  appointmentUrl        String?   @map("appointment_url")
+  contactPageFound      Boolean   @default(false) @map("contact_page_found")
+  contactUrl            String?   @map("contact_url")
+  bookingFlowStrength   String?   @map("booking_flow_strength") // Strong booking flow, Basic contact form, Phone-first only, Text-enabled, Chat-enabled, Weak or missing CTA, Unknown
+  textCapability        String?   @map("text_capability") // Found, Not Found, Unclear
+  textEvidence          String?   @map("text_evidence")
+  chatWidgetFound       Boolean   @default(false) @map("chat_widget_found")
+  chatWidgetName        String?   @map("chat_widget_name")
+  formFound             Boolean   @default(false) @map("form_found")
+  formType              String?   @map("form_type")
+  detectedSoftware      String?   @map("detected_software")
+  softwareConfidence    String?   @map("software_confidence") // High, Medium, Low
+  softwareEvidence      String?   @map("software_evidence")
+  evidenceUrl           String?   @map("evidence_url")
+  rawSignalsJson        String?   @map("raw_signals_json") // JSON string of all matches
+  scanStartedAt         DateTime? @map("scan_started_at")
+  scanFinishedAt        DateTime? @map("scan_finished_at")
+
+  @@map("website_scans")
+}
+
+model LeadScore {
+  id                  String   @id @default(uuid())
+  leadId              String   @map("lead_id")
+  lead                Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  torqiFitScore       Int      @default(0) @map("torqi_fit_score")
+  leadGrade           String   @map("lead_grade") // A, B, C, D
+  dataConfidenceScore Int      @default(0) @map("data_confidence_score")
+  primaryBucket       String?  @map("primary_bucket")
+  secondaryBuckets    String?  @map("secondary_buckets") // Comma-separated or JSON
+  salesHook           String?  @map("sales_hook")
+  openingLine         String?  @map("opening_line")
+  outreachPriority    String?  @map("outreach_priority") // High, Medium, Low
+  scoreBreakdownJson  String?  @map("score_breakdown_json") // JSON breakdown of points
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  @@map("lead_scores")
+}
+
+model Export {
+  id         String   @id @default(uuid())
+  campaignId String   @map("campaign_id")
+  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  exportType String   @map("export_type") // full, sales, crm, software-fit, after-hours
+  fileName   String   @map("file_name")
+  filePath   String   @map("file_path")
+  rowCount   Int      @default(0) @map("row_count")
+  createdAt  DateTime @default(now()) @map("created_at")
+  createdBy  String?  @map("created_by")
+
+  @@map("exports")
+}
+
+model Job {
+  id           String    @id @default(uuid())
+  campaignId   String    @map("campaign_id")
+  campaign     Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  type         String // Campaign processing type
+  status       String    @default("pending") // pending, processing, completed, failed
+  payloadJson  String?   @map("payload_json")
+  attempts     Int       @default(0)
+  maxAttempts  Int       @default(3) @map("max_attempts")
+  errorMessage String?   @map("error_message")
+  startedAt    DateTime? @map("started_at")
+  completedAt  DateTime? @map("completed_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  @@map("jobs")
+}
+
+model Log {
+  id         String   @id @default(uuid())
+  campaignId String?  @map("campaign_id")
+  leadId     String?  @map("lead_id")
+  level      String // info, warn, error
+  message    String
+  context    String?
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@map("logs")
+}
+
+model Setting {
+  id                          String   @id @default("default")
+  googleMapsApiKey            String?  @map("google_maps_api_key")
+  maxZipsPerCampaign          Int      @default(10) @map("max_zips_per_campaign")
+  maxQueriesPerZip            Int      @default(5) @map("max_queries_per_zip")
+  maxWebsitesScannedPerMinute Int      @default(10) @map("max_websites_scanned_per_minute")
+  websiteTimeoutSeconds       Int      @default(15) @map("website_timeout_seconds")
+  enableJsScanDefault         Boolean  @default(false) @map("enable_js_scan_default")
+  defaultExportFormat         String   @default("sales") @map("default_export_format")
+  excludedDomains             String?  @map("excluded_domains") // Comma-separated list of domains to exclude, e.g. facebook.com, yelp.com, youtube.com
+  excludedBusinessNames       String?  @map("excluded_business_names") // Comma-separated list of business names to exclude
+  excludedBusinessStatuses     String?  @map("excluded_business_statuses") // Comma-separated list of business statuses to exclude, e.g. CLOSED_PERMANENTLY
+  updatedAt                   DateTime @updatedAt @map("updated_at")
+
+  @@map("settings")
+}

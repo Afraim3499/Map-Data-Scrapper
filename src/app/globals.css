@@ -1,26 +1,300 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  --background: #F8FAFC; /* Premium light off-white */
+  --foreground: #0F172A; /* Deep Slate / Charcoal */
+  
+  --brand-red: #FF002E;
+  --brand-red-hover: #E60029;
+  --brand-red-glow: rgba(255, 0, 46, 0.08);
+  
+  --card-bg: #FFFFFF; /* Pure White Card background */
+  --card-border: #E2E8F0; /* Soft gray border */
+  --card-glow: rgba(15, 23, 42, 0.04); /* Light panel shadow */
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --slate-900: #F1F5F9; /* Off-white gray */
+  --slate-800: #E2E8F0; /* Light gray for borders */
+  --slate-700: #CBD5E1; /* Muted gray border */
+  --slate-400: #64748B; /* Secondary slate gray text */
+  --slate-200: #1E293B; /* Secondary dark text */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: 'Outfit', 'Plus Jakarta Sans', system-ui, sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--background) !important;
+  color: var(--foreground) !important;
+  font-family: var(--font-sans);
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(255, 0, 46, 0.03) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(100, 116, 139, 0.05) 0%, transparent 60%) !important;
+  background-attachment: fixed;
+  overflow-x: hidden;
+}
+
+/* Glassmorphism utility rewritten for Light Mode */
+.glass-panel {
+  background: var(--card-bg) !important;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--card-border) !important;
+  box-shadow: 0 4px 20px 0 var(--card-glow) !important;
+}
+
+.glass-panel-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-panel-hover:hover {
+  border-color: rgba(255, 0, 46, 0.3) !important;
+  box-shadow: 0 12px 30px 0 rgba(255, 0, 46, 0.06) !important;
+  transform: translateY(-2px);
+}
+
+/* Glowing text & borders */
+.text-glow {
+  text-shadow: 0 0 8px rgba(255, 0, 46, 0.2);
+}
+
+.border-glow {
+  box-shadow: 0 0 10px rgba(255, 0, 46, 0.15) !important;
+  border-color: rgba(255, 0, 46, 0.3) !important;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(241, 245, 249, 0.8);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--brand-red);
+}
+
+/* Animation utilities */
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.03);
+  }
+}
+
+.pulse-glow {
+  animation: pulseGlow 4s infinite ease-in-out;
+}
+
+/* Custom table classes mapped to Light Mode */
+.custom-table th {
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  color: var(--slate-400) !important;
+  border-bottom: 1px solid var(--card-border) !important;
+  background-color: var(--slate-900);
+}
+
+.custom-table td {
+  border-bottom: 1px solid var(--slate-900) !important;
+  color: #334155 !important;
+}
+
+.custom-table tr:hover {
+  background-color: var(--slate-900) !important;
+}
+
+.custom-table tr:last-child td {
+  border-bottom: none !important;
+}
+
+/* Global Light Mode Overrides for Dark Classes in Markup */
+
+/* 1. Header & Text Colors */
+h1, h2, h3, h4, h5, h6,
+.text-white {
+  color: #0F172A !important;
+}
+
+/* Keep actual text white for badges and CTA buttons */
+button.text-white,
+a.text-white,
+.bg-brand-red,
+[class*="bg-[#FF002E]"],
+[class*="bg-[#E60029]"],
+[class*="bg-green-"],
+[class*="bg-red-"],
+[class*="bg-blue-"],
+[class*="bg-purple-"],
+[class*="bg-[#FF002E]/"],
+[class*="bg-[#E60029]/"],
+.badge,
+.rounded-full,
+.px-4.py-2.rounded-lg.bg-\[\#FF002E\],
+.px-5.py-3.rounded-xl.bg-\[\#FF002E\],
+.px-5.py-2\.5.rounded-lg.bg-\[\#FF002E\],
+.px-8.py-4.rounded-xl.bg-\[\#FF002E\],
+.bg-slate-700\/30,
+.bg-purple-500\/10,
+.bg-blue-500\/10,
+.bg-yellow-500\/10,
+.bg-pink-500\/10,
+.bg-orange-500\/10,
+.bg-cyan-500\/10,
+.bg-green-500\/10,
+.bg-red-500\/10,
+.bg-amber-500\/10,
+.bg-cyan-500\/10,
+.bg-cyan-500\/20,
+.bg-\[\#FF002E\]\/5,
+.bg-\[\#FF002E\]\/10,
+.bg-slate-900\/50 {
+  color: inherit; /* Inherit default colors for badges, override text-white only */
+}
+
+/* Enforce actual white text for solid red/green buttons */
+.bg-\[\#FF002E\],
+.bg-\[\#E60029\],
+.bg-green-600 {
+  color: #FFFFFF !important;
+}
+
+/* Muted secondary text colors */
+.text-slate-200, .text-slate-300, .text-slate-400 {
+  color: #475569 !important;
+}
+
+.text-slate-500 {
+  color: #64748B !important;
+}
+
+/* Monospace terminal logs contrast fix */
+.bg-slate-950,
+.bg-slate-950 *,
+[class*="bg-[#04060b]"],
+[class*="bg-[#04060b]"] *,
+pre,
+code,
+.font-mono {
+  color: #F1F5F9 !important;
+}
+
+/* Specifically restore color coding for levels inside console logs */
+.bg-slate-950 .text-red-400,
+.bg-slate-950 .text-red-500,
+[class*="bg-[#04060b]"] .text-red-400,
+[class*="bg-[#04060b]"] .text-red-500 {
+  color: #F87171 !important;
+}
+.bg-slate-950 .text-green-400,
+.bg-slate-950 .text-green-500,
+[class*="bg-[#04060b]"] .text-green-400,
+[class*="bg-[#04060b]"] .text-green-500 {
+  color: #4ADE80 !important;
+}
+.bg-slate-950 .text-yellow-400,
+.bg-slate-950 .text-yellow-500,
+[class*="bg-[#04060b]"] .text-yellow-400,
+[class*="bg-[#04060b]"] .text-yellow-500 {
+  color: #FBBF24 !important;
+}
+.bg-slate-950 .text-blue-400,
+.bg-slate-950 .text-blue-500,
+[class*="bg-[#04060b]"] .text-blue-400,
+[class*="bg-[#04060b]"] .text-blue-500 {
+  color: #60A5FA !important;
+}
+.bg-slate-950 .text-cyan-400,
+.bg-slate-950 .text-cyan-500,
+[class*="bg-[#04060b]"] .text-cyan-400,
+[class*="bg-[#04060b]"] .text-cyan-500 {
+  color: #22D3EE !important;
+}
+.bg-slate-950 .text-slate-400,
+.bg-slate-950 .text-slate-500,
+.bg-slate-950 .text-slate-600,
+[class*="bg-[#04060b]"] .text-slate-400,
+[class*="bg-[#04060b]"] .text-slate-500,
+[class*="bg-[#04060b]"] .text-slate-600 {
+  color: #94A3B8 !important;
+}
+
+/* 2. Container Panel Backgrounds */
+header {
+  background-color: rgba(255, 255, 255, 0.85) !important;
+  border-bottom: 1px solid #E2E8F0 !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+.bg-\[\#0a0f1d\],
+.bg-slate-950,
+.bg-slate-900 {
+  background-color: #FFFFFF !important;
+}
+
+.bg-slate-900\/50 {
+  background-color: #F8FAFC !important;
+}
+
+.bg-white\/\[0\.02\],
+.bg-white\/\[0\.01\],
+.bg-white\/5 {
+  background-color: #F1F5F9 !important;
+}
+
+.bg-white\/10:hover {
+  background-color: #E2E8F0 !important;
+}
+
+/* Borders */
+.border-white\/5,
+.border-white\/10 {
+  border-color: #E2E8F0 !important;
+}
+
+/* Form inputs & boxes */
+input, select, textarea {
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+  border: 1px solid #CBD5E1 !important;
+}
+
+input::placeholder {
+  color: #94A3B8 !important;
+}
+
+/* Slide-out drawer detail overrides */
+.fixed.inset-0.z-50 {
+  background-color: rgba(15, 23, 42, 0.4) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+  backdrop-filter: blur(4px) !important;
+}
+
+.fixed.inset-0.z-50 h3 {
+  color: #0F172A !important;
+}
+
+.font-mono.text-slate-400 {
+  color: #475569 !important;
+}
+
+.border-l-2.border-l-\[\#FF002E\] {
+  border-left-width: 4px !important;
+  border-left-color: #FF002E !important;
+  background-color: rgba(255, 0, 46, 0.02) !important;
 }
