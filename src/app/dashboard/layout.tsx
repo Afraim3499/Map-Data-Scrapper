@@ -20,7 +20,7 @@ export default function DashboardLayout({
               className="rounded border border-white/10"
             />
             <h1 className="text-base font-extrabold tracking-wider text-white">
-              TORQI <span className="text-glow text-[#FF002E] font-medium text-[10px] tracking-normal px-2 py-0.5 rounded-full bg-[#FF002E]/10 border border-[#FF002E]/20">TERRITORY BUILDER</span>
+              TORQI <span className="text-glow text-[#FF5C00] font-medium text-[10px] tracking-normal px-2 py-0.5 rounded-full bg-[#FF5C00]/10 border border-[#FF5C00]/20">TERRITORY BUILDER</span>
             </h1>
           </Link>
 

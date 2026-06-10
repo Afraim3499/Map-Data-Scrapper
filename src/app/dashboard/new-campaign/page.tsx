@@ -114,7 +114,7 @@ export default function NewCampaignPage() {
           {/* Name */}
           <div className="flex flex-col gap-2">
             <label htmlFor="campaign-name" className="text-xs font-bold text-slate-300 uppercase tracking-wide">
-              Campaign Name <span className="text-[#FF002E]">*</span>
+              Campaign Name <span className="text-[#FF5C00]">*</span>
             </label>
             <input 
               id="campaign-name"
@@ -123,7 +123,7 @@ export default function NewCampaignPage() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
-              className="px-4 py-3 rounded-lg bg-slate-900 border border-white/10 hover:border-white/20 focus:border-[#FF002E] text-white text-sm outline-none transition-all"
+              className="px-4 py-3 rounded-lg bg-slate-900 border border-white/10 hover:border-white/20 focus:border-[#FF5C00] text-white text-sm outline-none transition-all"
             />
             <span className="text-[10px] text-slate-500">Provide a descriptive name for your sales target group.</span>
           </div>
@@ -138,7 +138,7 @@ export default function NewCampaignPage() {
                 id="campaign-state"
                 value={state}
                 onChange={(e) => setState(e.target.value)}
-                className="px-4 py-3 rounded-lg bg-slate-900 border border-white/10 text-white text-sm outline-none focus:border-[#FF002E] transition-all"
+                className="px-4 py-3 rounded-lg bg-slate-900 border border-white/10 text-white text-sm outline-none focus:border-[#FF5C00] transition-all"
               >
                 {STATES.map(st => (
                   <option key={st} value={st}>{st}</option>
@@ -156,7 +156,7 @@ export default function NewCampaignPage() {
                 id="campaign-category"
                 value={businessCategory}
                 onChange={(e) => setBusinessCategory(e.target.value)}
-                className="px-4 py-3 rounded-lg bg-slate-900 border border-white/10 text-white text-sm outline-none focus:border-[#FF002E] transition-all"
+                className="px-4 py-3 rounded-lg bg-slate-900 border border-white/10 text-white text-sm outline-none focus:border-[#FF5C00] transition-all"
               >
                 {CATEGORIES.map(cat => (
                   <option key={cat} value={cat}>{cat}</option>
@@ -169,7 +169,7 @@ export default function NewCampaignPage() {
           {/* Search Queries */}
           <div className="flex flex-col gap-2">
             <label htmlFor="campaign-queries" className="text-xs font-bold text-slate-300 uppercase tracking-wide">
-              Google Maps Search Queries <span className="text-[#FF002E]">*</span>
+              Google Maps Search Queries <span className="text-[#FF5C00]">*</span>
             </label>
             <input 
               id="campaign-queries"
@@ -178,7 +178,7 @@ export default function NewCampaignPage() {
               value={searchQueries}
               onChange={(e) => setSearchQueries(e.target.value)}
               required
-              className="px-4 py-3 rounded-lg bg-slate-900 border border-white/10 hover:border-white/20 focus:border-[#FF002E] text-white text-sm outline-none transition-all"
+              className="px-4 py-3 rounded-lg bg-slate-900 border border-white/10 hover:border-white/20 focus:border-[#FF5C00] text-white text-sm outline-none transition-all"
             />
             <span className="text-[10px] text-slate-500">Comma-separated query words sent to the Google Places search endpoint.</span>
           </div>
@@ -190,7 +190,7 @@ export default function NewCampaignPage() {
               type="checkbox"
               checked={runImmediately}
               onChange={(e) => setRunImmediately(e.target.checked)}
-              className="w-4.5 h-4.5 accent-[#FF002E] cursor-pointer rounded"
+              className="w-4.5 h-4.5 accent-[#FF5C00] cursor-pointer rounded"
             />
             <div className="flex flex-col">
               <label htmlFor="run-immediately" className="text-xs font-bold text-white cursor-pointer select-none">
@@ -211,7 +211,7 @@ export default function NewCampaignPage() {
             <button 
               type="submit"
               disabled={loading}
-              className="px-6 py-2.5 rounded-lg bg-[#FF002E] hover:bg-[#E60029] text-white text-xs font-bold tracking-wide border-glow transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 py-2.5 rounded-lg bg-[#FF5C00] hover:bg-[#E05200] text-white text-xs font-bold tracking-wide border-glow transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Creating...' : (runImmediately ? 'Save & Start Scan' : 'Save as Draft')}
             </button>

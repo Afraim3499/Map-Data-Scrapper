@@ -93,7 +93,7 @@ export default async function DashboardPage() {
         </div>
         <Link 
           href="/dashboard/new-campaign"
-          className="px-5 py-3 rounded-xl bg-[#FF002E] hover:bg-[#E60029] text-white text-sm font-bold tracking-wide border-glow transition-all"
+          className="px-5 py-3 rounded-xl bg-[#FF5C00] hover:bg-[#E05200] text-white text-sm font-bold tracking-wide border-glow transition-all"
         >
           + New Campaign
         </Link>
@@ -125,7 +125,7 @@ export default async function DashboardPage() {
             <p className="text-slate-400 text-xs max-w-sm mx-auto mb-6">Create your first territory builder campaign to fetch business details and crawl websites from Google Maps.</p>
             <Link 
               href="/dashboard/new-campaign"
-              className="px-5 py-2.5 rounded-lg bg-[#FF002E] hover:bg-[#E60029] text-white text-xs font-semibold border-glow transition-all inline-block"
+              className="px-5 py-2.5 rounded-lg bg-[#FF5C00] hover:bg-[#E05200] text-white text-xs font-semibold border-glow transition-all inline-block"
             >
               Build Territory
             </Link>
@@ -149,7 +149,7 @@ export default async function DashboardPage() {
                 {campaigns.map((c) => (
                   <tr key={c.id} className="hover:bg-white/[0.02] transition-colors">
                     <td className="px-6 py-4.5 font-bold text-white">
-                      <Link href={`/dashboard/campaigns/${c.id}`} className="hover:text-[#FF002E] transition-colors">
+                      <Link href={`/dashboard/campaigns/${c.id}`} className="hover:text-[#FF5C00] transition-colors">
                         {c.name}
                       </Link>
                     </td>
@@ -173,7 +173,7 @@ export default async function DashboardPage() {
                     </td>
                     <td className="px-6 py-4.5 text-right">
                       {c.status === 'complete' ? (
-                        <span className="font-bold text-[#FF002E]">{c.totalQualified} / {c.totalEnriched}</span>
+                        <span className="font-bold text-[#FF5C00]">{c.totalQualified} / {c.totalEnriched}</span>
                       ) : (
                         <span className="text-slate-500">—</span>
                       )}
@@ -184,7 +184,7 @@ export default async function DashboardPage() {
                     <td className="px-6 py-4.5 text-center">
                       <Link 
                         href={`/dashboard/campaigns/${c.id}`}
-                        className="px-3 py-1.5 rounded bg-white/5 hover:bg-[#FF002E] border border-white/10 hover:border-[#FF002E] hover:text-white text-slate-300 text-[10px] font-bold transition-all inline-block"
+                        className="px-3 py-1.5 rounded bg-white/5 hover:bg-[#FF5C00] border border-white/10 hover:border-[#FF5C00] hover:text-white text-slate-300 text-[10px] font-bold transition-all inline-block"
                       >
                         Open Detail
                       </Link>

@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
-import fs from 'fs';
-import path from 'path';
+import { exportCampaignLeads } from '@/lib/services/exporter';
 
 export async function GET(
   request: Request,
@@ -15,12 +14,8 @@ export async function GET(
       return NextResponse.json({ error: 'Export not found' }, { status: 404 });
     }
 
-    const fullPath = path.join(process.cwd(), 'public', dbExport.filePath);
-    if (!fs.existsSync(fullPath)) {
-      return NextResponse.json({ error: 'CSV file not found on disk' }, { status: 404 });
-    }
-
-    const csvContent = fs.readFileSync(fullPath, 'utf-8');
+    // Generate the CSV content on the fly
+    const { csvContent } = await exportCampaignLeads(dbExport.campaignId, dbExport.exportType);
 
     // Return downloadable response
     return new Response(csvContent, {

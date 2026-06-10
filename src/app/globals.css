@@ -6,9 +6,9 @@
   --background: #F8FAFC; /* Premium light off-white */
   --foreground: #0F172A; /* Deep Slate / Charcoal */
   
-  --brand-red: #FF002E;
-  --brand-red-hover: #E60029;
-  --brand-red-glow: rgba(255, 0, 46, 0.08);
+  --brand-orange: #FF5C00;
+  --brand-orange-hover: #E05200;
+  --brand-orange-glow: rgba(255, 92, 0, 0.08);
   
   --card-bg: #FFFFFF; /* Pure White Card background */
   --card-border: #E2E8F0; /* Soft gray border */
@@ -28,7 +28,7 @@ body {
   color: var(--foreground) !important;
   font-family: var(--font-sans);
   background-image: 
-    radial-gradient(circle at 10% 20%, rgba(255, 0, 46, 0.03) 0%, transparent 40%),
+    radial-gradient(circle at 10% 20%, rgba(255, 92, 0, 0.03) 0%, transparent 40%),
     radial-gradient(circle at 90% 80%, rgba(100, 116, 139, 0.05) 0%, transparent 60%) !important;
   background-attachment: fixed;
   overflow-x: hidden;
@@ -48,19 +48,19 @@ body {
 }
 
 .glass-panel-hover:hover {
-  border-color: rgba(255, 0, 46, 0.3) !important;
-  box-shadow: 0 12px 30px 0 rgba(255, 0, 46, 0.06) !important;
+  border-color: rgba(255, 92, 0, 0.3) !important;
+  box-shadow: 0 12px 30px 0 rgba(255, 92, 0, 0.06) !important;
   transform: translateY(-2px);
 }
 
 /* Glowing text & borders */
 .text-glow {
-  text-shadow: 0 0 8px rgba(255, 0, 46, 0.2);
+  text-shadow: 0 0 8px rgba(255, 92, 0, 0.2);
 }
 
 .border-glow {
-  box-shadow: 0 0 10px rgba(255, 0, 46, 0.15) !important;
-  border-color: rgba(255, 0, 46, 0.3) !important;
+  box-shadow: 0 0 10px rgba(255, 92, 0, 0.15) !important;
+  border-color: rgba(255, 92, 0, 0.3) !important;
 }
 
 /* Custom scrollbar */
@@ -79,7 +79,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--brand-red);
+  background: var(--brand-orange);
 }
 
 /* Animation utilities */
@@ -133,21 +133,21 @@ h1, h2, h3, h4, h5, h6,
 /* Keep actual text white for badges and CTA buttons */
 button.text-white,
 a.text-white,
-.bg-brand-red,
-[class*="bg-[#FF002E]"],
-[class*="bg-[#E60029]"],
+.bg-brand-orange,
+[class*="bg-[#FF5C00]"],
+[class*="bg-[#E05200]"],
 [class*="bg-green-"],
 [class*="bg-red-"],
 [class*="bg-blue-"],
 [class*="bg-purple-"],
-[class*="bg-[#FF002E]/"],
-[class*="bg-[#E60029]/"],
+[class*="bg-[#FF5C00]/"],
+[class*="bg-[#E05200]/"],
 .badge,
 .rounded-full,
-.px-4.py-2.rounded-lg.bg-\[\#FF002E\],
-.px-5.py-3.rounded-xl.bg-\[\#FF002E\],
-.px-5.py-2\.5.rounded-lg.bg-\[\#FF002E\],
-.px-8.py-4.rounded-xl.bg-\[\#FF002E\],
+.px-4.py-2.rounded-lg.bg-\[\#FF5C00\],
+.px-5.py-3.rounded-xl.bg-\[\#FF5C00\],
+.px-5.py-2\.5.rounded-lg.bg-\[\#FF5C00\],
+.px-8.py-4.rounded-xl.bg-\[\#FF5C00\],
 .bg-slate-700\/30,
 .bg-purple-500\/10,
 .bg-blue-500\/10,
@@ -160,15 +160,15 @@ a.text-white,
 .bg-amber-500\/10,
 .bg-cyan-500\/10,
 .bg-cyan-500\/20,
-.bg-\[\#FF002E\]\/5,
-.bg-\[\#FF002E\]\/10,
+.bg-\[\#FF5C00\]\/5,
+.bg-\[\#FF5C00\]\/10,
 .bg-slate-900\/50 {
   color: inherit; /* Inherit default colors for badges, override text-white only */
 }
 
 /* Enforce actual white text for solid red/green buttons */
-.bg-\[\#FF002E\],
-.bg-\[\#E60029\],
+.bg-\[\#FF5C00\],
+.bg-\[\#E05200\],
 .bg-green-600 {
   color: #FFFFFF !important;
 }
@@ -293,8 +293,8 @@ input::placeholder {
   color: #475569 !important;
 }
 
-.border-l-2.border-l-\[\#FF002E\] {
+.border-l-2.border-l-\[\#FF5C00\] {
   border-left-width: 4px !important;
-  border-left-color: #FF002E !important;
-  background-color: rgba(255, 0, 46, 0.02) !important;
+  border-left-color: #FF5C00 !important;
+  background-color: rgba(255, 92, 0, 0.02) !important;
 }

@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { exportCampaignLeads } from '@/lib/services/exporter';
-import fs from 'fs';
-import path from 'path';
 
 export async function POST(
   request: Request,
@@ -11,22 +9,14 @@ export async function POST(
   const { id, type } = await params;
 
   try {
-    const { csvContent, fileName, rowCount } = await exportCampaignLeads(id, type);
-
-    // Save to public/exports/ folder
-    const exportsDir = path.join(process.cwd(), 'public', 'exports');
-    if (!fs.existsSync(exportsDir)) {
-      fs.mkdirSync(exportsDir, { recursive: true });
-    }
-    const fullPath = path.join(exportsDir, fileName);
-    fs.writeFileSync(fullPath, csvContent, 'utf-8');
+    const { fileName, rowCount } = await exportCampaignLeads(id, type);
 
     const dbExport = await prisma.export.create({
       data: {
         campaignId: id,
         exportType: type,
         fileName,
-        filePath: `/exports/${fileName}`,
+        filePath: `dynamic-on-the-fly`,
         rowCount,
       },
     });

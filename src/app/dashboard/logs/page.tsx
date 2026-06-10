@@ -110,7 +110,7 @@ export default function LogsPage() {
           placeholder="Filter by keyword or campaign..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="px-4 py-2.5 rounded-xl bg-slate-900 border border-white/5 focus:border-[#FF002E] text-white text-xs outline-none transition-all"
+          className="px-4 py-2.5 rounded-xl bg-slate-900 border border-white/5 focus:border-[#FF5C00] text-white text-xs outline-none transition-all"
         />
 
         <div className="flex items-center justify-end gap-2 text-xs">
@@ -121,7 +121,7 @@ export default function LogsPage() {
               onClick={() => setFilterLevel(lvl)}
               className={`px-3 py-1.5 rounded-lg border font-bold capitalize transition-all ${
                 filterLevel === lvl 
-                  ? 'bg-[#FF002E] border-[#FF002E] text-white' 
+                  ? 'bg-[#FF5C00] border-[#FF5C00] text-white' 
                   : 'bg-slate-900 border-white/5 text-slate-400 hover:text-white'
               }`}
             >

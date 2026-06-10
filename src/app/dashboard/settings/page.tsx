@@ -88,7 +88,7 @@ export default function SettingsPage() {
     return (
       <div className="flex-1 flex items-center justify-center py-24">
         <div className="text-center">
-          <div className="w-8 h-8 rounded-full border-2 border-slate-700 border-t-[#FF002E] animate-spin mx-auto mb-4"></div>
+          <div className="w-8 h-8 rounded-full border-2 border-slate-700 border-t-[#FF5C00] animate-spin mx-auto mb-4"></div>
           <p className="text-slate-400 text-xs font-mono">Loading system configuration...</p>
         </div>
       </div>
@@ -130,7 +130,7 @@ export default function SettingsPage() {
                   placeholder="AIzaSy..."
                   value={googleMapsApiKey}
                   onChange={(e) => setGoogleMapsApiKey(e.target.value)}
-                  className="w-full pl-4 pr-16 py-3 rounded-lg bg-slate-900 border border-white/10 hover:border-white/20 focus:border-[#FF002E] text-white text-xs outline-none focus:ring-0 transition-all font-mono"
+                  className="w-full pl-4 pr-16 py-3 rounded-lg bg-slate-900 border border-white/10 hover:border-white/20 focus:border-[#FF5C00] text-white text-xs outline-none focus:ring-0 transition-all font-mono"
                 />
                 <button
                   type="button"
@@ -164,7 +164,7 @@ export default function SettingsPage() {
                 onChange={(e) => setMaxZipsPerCampaign(Number(e.target.value))}
                 min={1}
                 max={5000}
-                className="px-4 py-3 rounded-lg bg-slate-900 border border-white/10 text-white text-xs outline-none focus:border-[#FF002E] transition-all font-mono"
+                className="px-4 py-3 rounded-lg bg-slate-900 border border-white/10 text-white text-xs outline-none focus:border-[#FF5C00] transition-all font-mono"
               />
               <span className="text-[10px] text-slate-500">Limits grid searches (Default: 10, Max: 5000).</span>
             </div>
@@ -180,7 +180,7 @@ export default function SettingsPage() {
                 onChange={(e) => setMaxQueriesPerZip(Number(e.target.value))}
                 min={1}
                 max={10}
-                className="px-4 py-3 rounded-lg bg-slate-900 border border-white/10 text-white text-xs outline-none focus:border-[#FF002E] transition-all font-mono"
+                className="px-4 py-3 rounded-lg bg-slate-900 border border-white/10 text-white text-xs outline-none focus:border-[#FF5C00] transition-all font-mono"
               />
               <span className="text-[10px] text-slate-500">Max query keywords processed per cell (Default: 5).</span>
             </div>
@@ -196,7 +196,7 @@ export default function SettingsPage() {
                 onChange={(e) => setMaxWebsitesScannedPerMinute(Number(e.target.value))}
                 min={1}
                 max={120}
-                className="px-4 py-3 rounded-lg bg-slate-900 border border-white/10 text-white text-xs outline-none focus:border-[#FF002E] transition-all font-mono"
+                className="px-4 py-3 rounded-lg bg-slate-900 border border-white/10 text-white text-xs outline-none focus:border-[#FF5C00] transition-all font-mono"
               />
               <span className="text-[10px] text-slate-500">Rate limiter for crawler tasks.</span>
             </div>
@@ -212,7 +212,7 @@ export default function SettingsPage() {
                 onChange={(e) => setWebsiteTimeoutSeconds(Number(e.target.value))}
                 min={2}
                 max={60}
-                className="px-4 py-3 rounded-lg bg-slate-900 border border-white/10 text-white text-xs outline-none focus:border-[#FF002E] transition-all font-mono"
+                className="px-4 py-3 rounded-lg bg-slate-900 border border-white/10 text-white text-xs outline-none focus:border-[#FF5C00] transition-all font-mono"
               />
               <span className="text-[10px] text-slate-500">Aborts crawl of slow sites after limit (Default: 15s).</span>
             </div>
@@ -235,7 +235,7 @@ export default function SettingsPage() {
                 placeholder="facebook.com, yelp.com, youtube.com"
                 value={excludedDomains}
                 onChange={(e) => setExcludedDomains(e.target.value)}
-                className="px-4 py-3 rounded-lg bg-slate-900 border border-white/10 text-white text-xs outline-none focus:border-[#FF002E] transition-all"
+                className="px-4 py-3 rounded-lg bg-slate-900 border border-white/10 text-white text-xs outline-none focus:border-[#FF5C00] transition-all"
               />
               <span className="text-[10px] text-slate-500">Comma-separated hostnames to skip crawling or recording.</span>
             </div>
@@ -250,7 +250,7 @@ export default function SettingsPage() {
                 placeholder="AutoZone, O'Reilly, NAPA Auto Parts"
                 value={excludedBusinessNames}
                 onChange={(e) => setExcludedBusinessNames(e.target.value)}
-                className="px-4 py-3 rounded-lg bg-slate-900 border border-white/10 text-white text-xs outline-none focus:border-[#FF002E] transition-all"
+                className="px-4 py-3 rounded-lg bg-slate-900 border border-white/10 text-white text-xs outline-none focus:border-[#FF5C00] transition-all"
               />
               <span className="text-[10px] text-slate-500">Comma-separated business keywords to skip from results.</span>
             </div>
@@ -265,7 +265,7 @@ export default function SettingsPage() {
                 placeholder="CLOSED_PERMANENTLY"
                 value={excludedBusinessStatuses}
                 onChange={(e) => setExcludedBusinessStatuses(e.target.value)}
-                className="px-4 py-3 rounded-lg bg-slate-900 border border-white/10 text-white text-xs outline-none focus:border-[#FF002E] transition-all"
+                className="px-4 py-3 rounded-lg bg-slate-900 border border-white/10 text-white text-xs outline-none focus:border-[#FF5C00] transition-all"
               />
               <span className="text-[10px] text-slate-500">Skip listings matching these status labels.</span>
             </div>
@@ -277,7 +277,7 @@ export default function SettingsPage() {
           <button
             type="submit"
             disabled={saving}
-            className="px-8 py-3.5 rounded-xl bg-[#FF002E] hover:bg-[#E60029] text-white font-bold text-sm tracking-wide border-glow transition-all disabled:opacity-50"
+            className="px-8 py-3.5 rounded-xl bg-[#FF5C00] hover:bg-[#E05200] text-white font-bold text-sm tracking-wide border-glow transition-all disabled:opacity-50"
           >
             {saving ? 'Saving System Changes...' : 'Save Configuration'}
           </button>

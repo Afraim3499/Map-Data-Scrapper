@@ -61,13 +61,13 @@ export default function LandingPage() {
           />
           <div>
             <h1 className="text-lg font-extrabold tracking-wider text-white flex items-center gap-1.5">
-              TORQI <span className="text-glow text-[#FF002E] font-medium text-xs tracking-normal px-2 py-0.5 rounded-full bg-[#FF002E]/10 border border-[#FF002E]/20">TERRITORY BUILDER</span>
+              TORQI <span className="text-glow text-[#FF5C00] font-medium text-xs tracking-normal px-2 py-0.5 rounded-full bg-[#FF5C00]/10 border border-[#FF5C00]/20">TERRITORY BUILDER</span>
             </h1>
           </div>
         </div>
         <Link 
           href="/dashboard" 
-          className="px-5 py-2.5 rounded-lg bg-[#FF002E] hover:bg-[#E60029] text-white text-sm font-semibold tracking-wide border-glow transition-all duration-200"
+          className="px-5 py-2.5 rounded-lg bg-[#FF5C00] hover:bg-[#E05200] text-white text-sm font-semibold tracking-wide border-glow transition-all duration-200"
         >
           Launch Dashboard
         </Link>
@@ -76,13 +76,13 @@ export default function LandingPage() {
       {/* Hero Section */}
       <main className="flex-1 flex flex-col items-center px-6 py-16 sm:py-24 text-center max-w-7xl mx-auto w-full">
         {/* Sub-header badge */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FF002E]/10 border border-[#FF002E]/30 text-xs text-[#FF002E] font-semibold tracking-wide uppercase mb-8">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#FF002E] animate-ping"></span>
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FF5C00]/10 border border-[#FF5C00]/30 text-xs text-[#FF5C00] font-semibold tracking-wide uppercase mb-8">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#FF5C00] animate-ping"></span>
           Sales Intelligence Platform
         </div>
 
         <h2 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-white max-w-4xl leading-tight mb-6">
-          Turn Google Maps Data Into A <span className="bg-gradient-to-r from-slate-950 via-slate-800 to-[#FF002E] bg-clip-text text-transparent">Scored, CSV-Ready</span> Lead Pipeline
+          Turn Google Maps Data Into A <span className="bg-gradient-to-r from-slate-950 via-slate-800 to-[#FF5C00] bg-clip-text text-transparent">Scored, CSV-Ready</span> Lead Pipeline
         </h2>
 
         <p className="text-lg text-slate-400 max-w-2xl leading-relaxed mb-12">
@@ -93,7 +93,7 @@ export default function LandingPage() {
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-20 w-full sm:w-auto">
           <Link 
             href="/dashboard" 
-            className="w-full sm:w-auto px-8 py-4 rounded-xl bg-[#FF002E] hover:bg-[#E60029] text-white font-bold tracking-wide border-glow transition-all duration-200 shadow-lg flex items-center justify-center gap-2 group"
+            className="w-full sm:w-auto px-8 py-4 rounded-xl bg-[#FF5C00] hover:bg-[#E05200] text-white font-bold tracking-wide border-glow transition-all duration-200 shadow-lg flex items-center justify-center gap-2 group"
           >
             Enter Dashboard 
             <span className="transform group-hover:translate-x-1 transition-transform">→</span>
@@ -109,7 +109,7 @@ export default function LandingPage() {
         {/* Marketing Metrics */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 w-full max-w-5xl mb-24">
           {stats.map((stat, i) => (
-            <div key={i} className="glass-panel rounded-2xl p-6 text-center border-l-2 border-l-[#FF002E]/60">
+            <div key={i} className="glass-panel rounded-2xl p-6 text-center border-l-2 border-l-[#FF5C00]/60">
               <span className="block text-3xl sm:text-4xl font-extrabold text-white mb-1">{stat.value}</span>
               <span className="block text-sm font-semibold text-slate-300 mb-0.5">{stat.label}</span>
               <span className="block text-xs text-slate-500">{stat.desc}</span>

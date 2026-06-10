@@ -290,7 +290,7 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
 
   const getGradeBadgeClass = (grade: string) => {
     switch (grade) {
-      case 'A': return 'bg-[#FF002E]/20 text-[#FF002E] border-[#FF002E]/40 font-bold';
+      case 'A': return 'bg-[#FF5C00]/20 text-[#FF5C00] border-[#FF5C00]/40 font-bold';
       case 'B': return 'bg-orange-500/20 text-orange-400 border-orange-500/40';
       case 'C': return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/40';
       case 'D': return 'bg-slate-700/30 text-slate-400 border-slate-700/50';
@@ -325,7 +325,7 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
     return (
       <div className="flex-1 flex items-center justify-center py-24">
         <div className="text-center">
-          <div className="w-8 h-8 rounded-full border-2 border-slate-700 border-t-[#FF002E] animate-spin mx-auto mb-4"></div>
+          <div className="w-8 h-8 rounded-full border-2 border-slate-700 border-t-[#FF5C00] animate-spin mx-auto mb-4"></div>
           <p className="text-slate-400 text-xs font-mono">Loading campaign parameters...</p>
         </div>
       </div>
@@ -367,7 +367,7 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
                 <button
                   onClick={() => triggerAction('start')}
                   disabled={actionLoading}
-                  className="px-4 py-2 rounded-lg bg-[#FF002E] hover:bg-[#E60029] text-white text-xs font-bold border-glow transition-all"
+                  className="px-4 py-2 rounded-lg bg-[#FF5C00] hover:bg-[#E05200] text-white text-xs font-bold border-glow transition-all"
                 >
                   Start Scrape Grid
                 </button>
@@ -423,7 +423,7 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
                   <button
                     onClick={() => triggerAction('start')}
                     disabled={actionLoading}
-                    className="px-4 py-2 rounded-lg bg-[#FF002E]/10 hover:bg-[#FF002E]/20 text-[#FF002E] border border-[#FF002E]/30 text-xs font-bold transition-all"
+                    className="px-4 py-2 rounded-lg bg-[#FF5C00]/10 hover:bg-[#FF5C00]/20 text-[#FF5C00] border border-[#FF5C00]/30 text-xs font-bold transition-all"
                   >
                     Restart Scrape
                   </button>
@@ -447,7 +447,7 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
                 `}</style>
                 <div 
                   id={`progress-bar-${campaign.id}`}
-                  className="h-full rounded-full bg-gradient-to-r from-[#FF002E]/80 to-[#FF002E] border-r border-[#FF002E] transition-all duration-500" 
+                  className="h-full rounded-full bg-gradient-to-r from-[#FF5C00]/80 to-[#FF5C00] border-r border-[#FF5C00] transition-all duration-500" 
                 ></div>
               </div>
 
@@ -485,7 +485,7 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
           <div className="grid grid-cols-2 gap-4">
             <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl text-center">
               <span className="block text-[10px] text-slate-500 uppercase font-bold">Qualified Targets</span>
-              <span className="text-2xl font-extrabold text-[#FF002E] block mt-1">{stats.qualified}</span>
+              <span className="text-2xl font-extrabold text-[#FF5C00] block mt-1">{stats.qualified}</span>
             </div>
             <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl text-center">
               <span className="block text-[10px] text-slate-500 uppercase font-bold">Total Scanned</span>
@@ -520,7 +520,7 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
             onClick={() => setActiveTab(tab.id as any)}
             className={`px-6 py-3 text-xs font-bold tracking-wider transition-all border-b-2 ${
               activeTab === tab.id 
-                ? 'border-[#FF002E] text-white bg-white/[0.01]' 
+                ? 'border-[#FF5C00] text-white bg-white/[0.01]' 
                 : 'border-transparent text-slate-400 hover:text-white'
             }`}
           >
@@ -541,13 +541,13 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
                 placeholder="Search name, phone, city..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="px-4 py-2.5 rounded-lg bg-slate-900 border border-white/5 focus:border-[#FF002E] text-white text-xs outline-none transition-all sm:col-span-2"
+                className="px-4 py-2.5 rounded-lg bg-slate-900 border border-white/5 focus:border-[#FF5C00] text-white text-xs outline-none transition-all sm:col-span-2"
               />
 
               <select 
                 value={filterGrade} 
                 onChange={(e) => setFilterGrade(e.target.value)}
-                className="px-3 py-2.5 rounded-lg bg-slate-900 border border-white/5 text-white text-xs outline-none focus:border-[#FF002E]"
+                className="px-3 py-2.5 rounded-lg bg-slate-900 border border-white/5 text-white text-xs outline-none focus:border-[#FF5C00]"
                 title="Filter by Letter Grade"
               >
                 <option value="">All Letter Grades</option>
@@ -560,7 +560,7 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
               <select 
                 value={filterBucket} 
                 onChange={(e) => setFilterBucket(e.target.value)}
-                className="px-3 py-2.5 rounded-lg bg-slate-900 border border-white/5 text-white text-xs outline-none focus:border-[#FF002E]"
+                className="px-3 py-2.5 rounded-lg bg-slate-900 border border-white/5 text-white text-xs outline-none focus:border-[#FF5C00]"
                 title="Filter by Core Gap"
               >
                 <option value="">All Core Gaps</option>
@@ -574,7 +574,7 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
               <select 
                 value={sort} 
                 onChange={(e) => setSort(e.target.value)}
-                className="px-3 py-2.5 rounded-lg bg-slate-900 border border-white/5 text-white text-xs outline-none focus:border-[#FF002E]"
+                className="px-3 py-2.5 rounded-lg bg-slate-900 border border-white/5 text-white text-xs outline-none focus:border-[#FF5C00]"
                 title="Sort Leads"
               >
                 <option value="score_desc">Fit Score: High to Low</option>
@@ -590,7 +590,7 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
             <div className="glass-panel rounded-2xl border border-white/5 overflow-hidden">
               {loadingLeads ? (
                 <div className="text-center py-20">
-                  <div className="w-6 h-6 rounded-full border-2 border-slate-700 border-t-[#FF002E] animate-spin mx-auto mb-2"></div>
+                  <div className="w-6 h-6 rounded-full border-2 border-slate-700 border-t-[#FF5C00] animate-spin mx-auto mb-2"></div>
                   <span className="text-slate-500 text-[10px] font-mono">Filtering lead catalog...</span>
                 </div>
               ) : leads.length === 0 ? (
@@ -643,7 +643,7 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
                           <td className="px-6 py-3 text-center" onClick={(e) => e.stopPropagation()}>
                             <button
                               onClick={() => triggerLeadRescan(l.id)}
-                              className="px-2 py-1 rounded bg-white/5 hover:bg-[#FF002E] border border-white/5 text-[9px] font-bold text-slate-400 hover:text-white transition-all"
+                              className="px-2 py-1 rounded bg-white/5 hover:bg-[#FF5C00] border border-white/5 text-[9px] font-bold text-slate-400 hover:text-white transition-all"
                             >
                               Rescan
                             </button>
@@ -683,7 +683,7 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
                         <div 
                           id={`grade-bar-${grd}`}
                           className={`h-full rounded-full ${
-                            grd === 'A' ? 'bg-[#FF002E]' : 
+                            grd === 'A' ? 'bg-[#FF5C00]' : 
                             grd === 'B' ? 'bg-orange-500' : 
                             grd === 'C' ? 'bg-yellow-500' : 'bg-slate-700'
                           }`}
@@ -794,7 +794,7 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
                   key={opt.id}
                   className={`flex items-start gap-4 p-4 rounded-xl border cursor-pointer select-none transition-all ${
                     selectedExportFormat === opt.id 
-                      ? 'bg-[#FF002E]/5 border-[#FF002E] text-white' 
+                      ? 'bg-[#FF5C00]/5 border-[#FF5C00] text-white' 
                       : 'bg-white/[0.01] border-white/5 text-slate-400 hover:text-white'
                   }`}
                 >
@@ -803,7 +803,7 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
                     name="export-format"
                     checked={selectedExportFormat === opt.id}
                     onChange={() => setSelectedExportFormat(opt.id)}
-                    className="mt-1 accent-[#FF002E]"
+                    className="mt-1 accent-[#FF5C00]"
                   />
                   <div>
                     <span className="block text-xs font-bold text-slate-200">{opt.label}</span>
@@ -814,7 +814,7 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
             </div>
 
             {exportMessage && (
-              <div className="p-3 bg-white/[0.02] border border-white/5 rounded-lg text-xs text-[#FF002E] font-semibold text-center font-mono">
+              <div className="p-3 bg-white/[0.02] border border-white/5 rounded-lg text-xs text-[#FF5C00] font-semibold text-center font-mono">
                 {exportMessage}
               </div>
             )}
@@ -822,7 +822,7 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
             <button
               onClick={handleExport}
               disabled={exporting}
-              className="w-full py-3.5 rounded-xl bg-[#FF002E] hover:bg-[#E60029] text-white font-bold text-xs tracking-wide border-glow transition-all"
+              className="w-full py-3.5 rounded-xl bg-[#FF5C00] hover:bg-[#E05200] text-white font-bold text-xs tracking-wide border-glow transition-all"
             >
               {exporting ? 'Compiling Lead Schema...' : 'Generate & Download CSV File'}
             </button>
@@ -859,7 +859,7 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
                 <div className="grid grid-cols-3 gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/5 text-center">
                   <div>
                     <span className="block text-[10px] text-slate-500 uppercase font-bold">Fit Score</span>
-                    <span className="text-2xl font-extrabold text-[#FF002E] mt-1 block">{selectedLead.score.torqiFitScore}</span>
+                    <span className="text-2xl font-extrabold text-[#FF5C00] mt-1 block">{selectedLead.score.torqiFitScore}</span>
                   </div>
                   <div>
                     <span className="block text-[10px] text-slate-500 uppercase font-bold">Priority</span>
@@ -878,13 +878,13 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
                 <div className="text-xs text-slate-300">
                   <span className="block text-slate-400 mb-2">Hours Summary: <strong>{selectedLead.hoursSummary || 'Not Available'}</strong></span>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 font-mono">
-                    <div className={`p-1.5 rounded ${selectedLead.closesBefore6 ? 'bg-[#FF002E]/5 text-[#FF002E]' : 'bg-slate-900/50'}`}>
+                    <div className={`p-1.5 rounded ${selectedLead.closesBefore6 ? 'bg-[#FF5C00]/5 text-[#FF5C00]' : 'bg-slate-900/50'}`}>
                       Closes &lt; 6PM: {selectedLead.closesBefore6 ? 'YES' : 'NO'}
                     </div>
-                    <div className={`p-1.5 rounded ${selectedLead.closedSaturday ? 'bg-[#FF002E]/5 text-[#FF002E]' : 'bg-slate-900/50'}`}>
+                    <div className={`p-1.5 rounded ${selectedLead.closedSaturday ? 'bg-[#FF5C00]/5 text-[#FF5C00]' : 'bg-slate-900/50'}`}>
                       Closed Saturday: {selectedLead.closedSaturday ? 'YES' : 'NO'}
                     </div>
-                    <div className={`p-1.5 rounded ${selectedLead.closedSunday ? 'bg-[#FF002E]/5 text-[#FF002E]' : 'bg-slate-900/50'}`}>
+                    <div className={`p-1.5 rounded ${selectedLead.closedSunday ? 'bg-[#FF5C00]/5 text-[#FF5C00]' : 'bg-slate-900/50'}`}>
                       Closed Sunday: {selectedLead.closedSunday ? 'YES' : 'NO'}
                     </div>
                   </div>
@@ -898,7 +898,7 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
                   {selectedLead.website && (
                     <button
                       onClick={() => triggerLeadRescan(selectedLead.id)}
-                      className="text-[10px] font-bold text-[#FF002E] hover:underline"
+                      className="text-[10px] font-bold text-[#FF5C00] hover:underline"
                     >
                       Rescan Domain
                     </button>
@@ -947,7 +947,7 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
                 ) : (
                   <div className="text-slate-500 text-xs py-2">
                     No web scan profile exists. Website: {selectedLead.website ? (
-                      <a href={selectedLead.website} target="_blank" rel="noopener noreferrer" className="text-[#FF002E] underline">
+                      <a href={selectedLead.website} target="_blank" rel="noopener noreferrer" className="text-[#FF5C00] underline">
                         {selectedLead.website}
                       </a>
                     ) : 'None'}
@@ -957,13 +957,13 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
 
               {/* Cold outreach script sales hook */}
               {selectedLead.score && (
-                <div className="glass-panel rounded-xl p-5 space-y-4 border-l-2 border-l-[#FF002E]">
+                <div className="glass-panel rounded-xl p-5 space-y-4 border-l-2 border-l-[#FF5C00]">
                   <h4 className="text-xs font-bold text-white uppercase tracking-wider">Outreach Cold-Call pitch</h4>
                   
                   <div className="space-y-3 text-xs text-slate-300">
                     <div>
                       <span className="text-slate-500 font-bold uppercase block text-[10px] mb-1">Opening Line Hook:</span>
-                      <p className="bg-[#FF002E]/5 p-3.5 rounded-lg border border-[#FF002E]/20 text-slate-200 leading-relaxed font-medium">
+                      <p className="bg-[#FF5C00]/5 p-3.5 rounded-lg border border-[#FF5C00]/20 text-slate-200 leading-relaxed font-medium">
                         "{selectedLead.score.openingLine || 'None generated.'}"
                       </p>
                     </div>
@@ -1003,7 +1003,7 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
                     href={selectedLead.website} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="px-4 py-2 rounded-lg bg-[#FF002E] hover:bg-[#E60029] text-white font-bold transition-all"
+                    className="px-4 py-2 rounded-lg bg-[#FF5C00] hover:bg-[#E05200] text-white font-bold transition-all"
                   >
                     Open Website URL
                   </a>
