@@ -8,6 +8,7 @@ export default function SettingsPage() {
   const [googleMapsApiKey, setGoogleMapsApiKey] = useState('');
   const [showApiKey, setShowApiKey] = useState(false);
   const [maxZipsPerCampaign, setMaxZipsPerCampaign] = useState(10);
+  const [zipCodeOffset, setZipCodeOffset] = useState(0);
   const [maxQueriesPerZip, setMaxQueriesPerZip] = useState(5);
   const [maxWebsitesScannedPerMinute, setMaxWebsitesScannedPerMinute] = useState(10);
   const [websiteTimeoutSeconds, setWebsiteTimeoutSeconds] = useState(15);
@@ -31,6 +32,7 @@ export default function SettingsPage() {
         
         setGoogleMapsApiKey(data.googleMapsApiKey || '');
         setMaxZipsPerCampaign(data.maxZipsPerCampaign || 10);
+        setZipCodeOffset(data.zipCodeOffset || 0);
         setMaxQueriesPerZip(data.maxQueriesPerZip || 5);
         setMaxWebsitesScannedPerMinute(data.maxWebsitesScannedPerMinute || 10);
         setWebsiteTimeoutSeconds(data.websiteTimeoutSeconds || 15);
@@ -60,6 +62,7 @@ export default function SettingsPage() {
         body: JSON.stringify({
           googleMapsApiKey,
           maxZipsPerCampaign,
+          zipCodeOffset,
           maxQueriesPerZip,
           maxWebsitesScannedPerMinute,
           websiteTimeoutSeconds,
@@ -167,6 +170,22 @@ export default function SettingsPage() {
                 className="px-4 py-3 rounded-lg bg-slate-900 border border-white/10 text-white text-xs outline-none focus:border-[#FF5C00] transition-all font-mono"
               />
               <span className="text-[10px] text-slate-500">Limits grid searches (Default: 10, Max: 5000).</span>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label htmlFor="zip-offset" className="text-xs font-bold text-slate-300 uppercase tracking-wide">
+                ZIP Code Offset (Start Skip)
+              </label>
+              <input 
+                id="zip-offset"
+                type="number" 
+                value={zipCodeOffset}
+                onChange={(e) => setZipCodeOffset(Number(e.target.value))}
+                min={0}
+                max={5000}
+                className="px-4 py-3 rounded-lg bg-slate-900 border border-white/10 text-white text-xs outline-none focus:border-[#FF5C00] transition-all font-mono"
+              />
+              <span className="text-[10px] text-slate-500">Skip the first N zip codes of the state (Default: 0).</span>
             </div>
 
             <div className="flex flex-col gap-2">

@@ -10,6 +10,7 @@ export async function GET() {
         id: 'default',
         googleMapsApiKey: '',
         maxZipsPerCampaign: 10,
+        zipCodeOffset: 0,
         maxQueriesPerZip: 5,
         maxWebsitesScannedPerMinute: 10,
         websiteTimeoutSeconds: 15,
@@ -35,6 +36,7 @@ export async function PATCH(request: Request) {
     const {
       googleMapsApiKey,
       maxZipsPerCampaign,
+      zipCodeOffset,
       maxQueriesPerZip,
       maxWebsitesScannedPerMinute,
       websiteTimeoutSeconds,
@@ -50,6 +52,7 @@ export async function PATCH(request: Request) {
       data: {
         googleMapsApiKey: googleMapsApiKey !== undefined ? googleMapsApiKey : undefined,
         maxZipsPerCampaign: maxZipsPerCampaign !== undefined ? Number(maxZipsPerCampaign) : undefined,
+        zipCodeOffset: zipCodeOffset !== undefined ? Number(zipCodeOffset) : undefined,
         maxQueriesPerZip: maxQueriesPerZip !== undefined ? Number(maxQueriesPerZip) : undefined,
         maxWebsitesScannedPerMinute: maxWebsitesScannedPerMinute !== undefined ? Number(maxWebsitesScannedPerMinute) : undefined,
         websiteTimeoutSeconds: websiteTimeoutSeconds !== undefined ? Number(websiteTimeoutSeconds) : undefined,

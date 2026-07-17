@@ -4,7 +4,7 @@ import { exportCampaignLeads } from '@/lib/services/exporter';
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string; filename: string }> }
 ) {
   const { id } = await params;
 

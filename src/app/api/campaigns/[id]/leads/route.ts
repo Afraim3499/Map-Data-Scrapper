@@ -15,10 +15,35 @@ export async function GET(
   const sort = searchParams.get('sort') || 'score_desc';
 
   try {
-    // Fetch all leads for campaign
+    // Fetch all leads for campaign (excluding heavy reviewsJson and hoursJson to prevent timeouts)
     const leads = await prisma.lead.findMany({
       where: { campaignId: id },
-      include: {
+      select: {
+        id: true,
+        campaignId: true,
+        placeId: true,
+        businessName: true,
+        phoneRaw: true,
+        phoneFormatted: true,
+        website: true,
+        address: true,
+        city: true,
+        state: true,
+        zip: true,
+        latitude: true,
+        longitude: true,
+        googleMapsUrl: true,
+        businessStatus: true,
+        rating: true,
+        reviewCount: true,
+        primaryType: true,
+        types: true,
+        hoursSummary: true,
+        closesBefore6: true,
+        closedSaturday: true,
+        closedSunday: true,
+        createdAt: true,
+        updatedAt: true,
         leadScores: true,
         websiteScans: true,
       },

@@ -48,6 +48,10 @@ interface Lead {
   closedSunday: boolean;
   weekdayCloseTime: string | null;
   googleMapsUrl: string | null;
+  reviewsJson?: string | null;
+  ownerName?: string | null;
+  rudeStaffMentioned?: boolean | null;
+  noPickUpMentioned?: boolean | null;
   score?: {
     torqiFitScore: number;
     leadGrade: string;
@@ -90,9 +94,10 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
   const [logs, setLogs] = useState<Log[]>([]);
   const [stats, setStats] = useState({ leads: 0, qualified: 0, afterHours: 0, softwareSignals: 0 });
   const [leads, setLeads] = useState<Lead[]>([]);
+  const [zips, setZips] = useState<any[]>([]);
   
   // UI Controls
-  const [activeTab, setActiveTab] = useState<'leads' | 'analytics' | 'logs' | 'export'>('leads');
+  const [activeTab, setActiveTab] = useState<'leads' | 'zips' | 'analytics' | 'logs' | 'export'>('leads');
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadingLeads, setLoadingLeads] = useState(false);
@@ -109,6 +114,7 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
   const [selectedExportFormat, setSelectedExportFormat] = useState('sales');
   const [exporting, setExporting] = useState(false);
   const [exportMessage, setExportMessage] = useState('');
+  const [lastExport, setLastExport] = useState<any>(null);
 
   // Fetch Campaign details
   const fetchCampaignData = async () => {
@@ -119,6 +125,7 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
       setCampaign(data.campaign);
       setLogs(data.logs);
       setStats(data.stats);
+      setZips(data.zips || []);
     } catch (err) {
       console.error(err);
     } finally {
@@ -151,13 +158,18 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
   // Poll for campaign status if active
   useEffect(() => {
     fetchCampaignData();
+    let isTicking = false;
     const interval = setInterval(async () => {
       if (campaign && ['queued', 'discovering_places', 'deduplicating', 'fetching_details', 'scanning_websites', 'scoring_leads'].includes(campaign.status)) {
+        if (isTicking) return;
+        isTicking = true;
         try {
           // Trigger a processing tick to keep the campaign moving on serverless platforms (Vercel)
           await fetch(`/api/campaigns/${id}/scan-tick`, { method: 'POST' });
         } catch (err) {
           console.error('Failed to trigger scan tick:', err);
+        } finally {
+          isTicking = false;
         }
         fetchCampaignData();
       }
@@ -229,6 +241,7 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
   const handleExport = async () => {
     setExporting(true);
     setExportMessage('');
+    setLastExport(null);
     try {
       const res = await fetch(`/api/campaigns/${id}/export/${selectedExportFormat}`, {
         method: 'POST',
@@ -236,8 +249,7 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
       if (!res.ok) throw new Error('Failed to generate export file');
       const exportRecord = await res.json();
       
-      // Open download URL
-      window.open(`/api/exports/${exportRecord.id}/download`, '_blank');
+      setLastExport(exportRecord);
       setExportMessage(`Success! Generated ${exportRecord.rowCount} rows.`);
       fetchCampaignData();
     } catch (err: any) {
@@ -511,6 +523,7 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
       <div className="flex border-b border-white/5">
         {[
           { id: 'leads', label: 'Leads Directory' },
+          { id: 'zips', label: 'ZIP Grid Progress' },
           { id: 'analytics', label: 'Charts & Analytics' },
           { id: 'logs', label: 'Execution Logs' },
           { id: 'export', label: 'Export Center' }
@@ -531,6 +544,62 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
 
       {/* Tab Panels */}
       <div className="min-h-[400px] flex flex-col">
+        {/* Tab 1.5: ZIP Grid Progress */}
+        {activeTab === 'zips' && (
+          <div className="space-y-4">
+            <div className="glass-panel rounded-2xl border border-white/5 overflow-hidden">
+              <div className="px-6 py-4 border-b border-white/5 bg-white/[0.01] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                  <h3 className="text-sm font-bold text-white">ZIP Code Extraction Map</h3>
+                  <p className="text-[10px] text-slate-500 mt-0.5">Tracking places lookup across target ZIP codes.</p>
+                </div>
+                <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-slate-600">
+                  <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-slate-400"></span> Pending ({zips.filter(z => z.status === 'pending').length})</span>
+                  <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-[#FF5C00] animate-pulse"></span> Scanning ({zips.filter(z => z.status === 'processing').length})</span>
+                  <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-green-600"></span> Completed ({zips.filter(z => z.status === 'completed').length})</span>
+                </div>
+              </div>
+              <div className="p-6">
+                {zips.length === 0 ? (
+                  <div className="text-center py-12 text-slate-500 text-xs">
+                    No ZIP code grid initialized yet. Start the campaign scan to load target ZIPs.
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
+                    {zips.map(zip => (
+                      <div 
+                        key={zip.id} 
+                        className={`p-3 rounded-xl border transition-all flex flex-col items-center justify-center text-center ${
+                          zip.status === 'completed' 
+                            ? 'bg-green-500/5 border-green-500/20 hover:border-green-500/40' 
+                            : zip.status === 'processing'
+                            ? 'bg-[#FF5C00]/5 border-[#FF5C00]/30 hover:border-[#FF5C00]/50 animate-pulse'
+                            : 'bg-white/[0.02] border-white/5 hover:border-white/10'
+                        }`}
+                      >
+                        <span className="text-xs font-bold text-slate-800">{zip.zipCode}</span>
+                        {zip.status === 'completed' ? (
+                          <span className="text-[9px] text-green-700 font-bold mt-1">
+                            {zip.leadsFound} leads
+                          </span>
+                        ) : zip.status === 'processing' ? (
+                          <span className="text-[9px] text-[#FF5C00] font-bold mt-1">
+                            Scanning...
+                          </span>
+                        ) : (
+                          <span className="text-[9px] text-slate-500 mt-1">
+                            Queued
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Tab 1: Leads Directory */}
         {activeTab === 'leads' && (
           <div className="space-y-4">
@@ -814,9 +883,19 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
             </div>
 
             {exportMessage && (
-              <div className="p-3 bg-white/[0.02] border border-white/5 rounded-lg text-xs text-[#FF5C00] font-semibold text-center font-mono">
+              <div className="p-3 bg-white/[0.02] border border-white/5 rounded-lg text-xs text-[#FF5C00] font-semibold text-center">
                 {exportMessage}
               </div>
+            )}
+
+            {lastExport && (
+              <a
+                href={`/api/exports/${lastExport.id}/${lastExport.fileName}`}
+                download={lastExport.fileName}
+                className="block text-center w-full py-3.5 rounded-xl bg-green-600 hover:bg-green-700 text-white font-bold text-xs tracking-wide transition-all border-glow animate-pulse"
+              >
+                📥 Click to Download: {lastExport.fileName}
+              </a>
             )}
 
             <button
@@ -824,7 +903,7 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
               disabled={exporting}
               className="w-full py-3.5 rounded-xl bg-[#FF5C00] hover:bg-[#E05200] text-white font-bold text-xs tracking-wide border-glow transition-all"
             >
-              {exporting ? 'Compiling Lead Schema...' : 'Generate & Download CSV File'}
+              {exporting ? 'Compiling Lead Schema...' : 'Generate Lead Export'}
             </button>
           </div>
         )}
@@ -889,6 +968,65 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
                     </div>
                   </div>
                 </div>
+              </div>
+
+              {/* Google Maps Review Insights */}
+              <div className="glass-panel rounded-xl p-5 space-y-4">
+                <h4 className="text-xs font-bold text-white uppercase tracking-wider">Google Maps Review Insights</h4>
+                
+                {/* Insights Summary */}
+                <div className="grid grid-cols-2 gap-3 text-xs">
+                  {selectedLead.ownerName && (
+                    <div className="col-span-2 p-3 bg-[#FF5C00]/5 border border-[#FF5C00]/10 rounded-lg flex items-center gap-2">
+                      <span className="text-base">🔑</span>
+                      <div>
+                        <span className="text-slate-500 block text-[10px] uppercase font-bold">Detected Owner</span>
+                        <span className="text-[#FF5C00] font-bold">{selectedLead.ownerName}</span>
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div className={`p-3 rounded-lg border text-center ${selectedLead.noPickUpMentioned ? 'bg-red-500/10 border-red-500/20 text-red-400 font-semibold' : 'bg-slate-900/50 border-white/5 text-slate-400'}`}>
+                    <span className="block text-[9px] uppercase text-slate-500 mb-1">Unanswered Calls</span>
+                    {selectedLead.noPickUpMentioned ? '⚠️ Mentioned' : 'No issues found'}
+                  </div>
+
+                  <div className={`p-3 rounded-lg border text-center ${selectedLead.rudeStaffMentioned ? 'bg-amber-500/10 border-amber-500/20 text-amber-400 font-semibold' : 'bg-slate-900/50 border-white/5 text-slate-400'}`}>
+                    <span className="block text-[9px] uppercase text-slate-500 mb-1">Staff Attitude</span>
+                    {selectedLead.rudeStaffMentioned ? '⚠️ Rude staff reported' : 'No issues found'}
+                  </div>
+                </div>
+
+                {/* Review snippets list */}
+                {selectedLead.reviewsJson ? (
+                  <div className="space-y-3 pt-3 border-t border-white/5">
+                    <span className="text-slate-500 text-[10px] uppercase font-bold block mb-2">Top Reviews</span>
+                    <div className="max-h-48 overflow-y-auto space-y-3 pr-1">
+                      {(() => {
+                        try {
+                          const reviews = JSON.parse(selectedLead.reviewsJson || '[]');
+                          if (reviews.length === 0) return <p className="text-slate-500 text-xs italic">No review snippets.</p>;
+                          return reviews.map((review: any, idx: number) => (
+                            <div key={idx} className="p-3 bg-slate-900/30 rounded border border-white/5 text-xs text-slate-300 space-y-1">
+                              <div className="flex items-center justify-between">
+                                <span className="font-bold text-slate-200">{review.author}</span>
+                                <div className="flex items-center gap-1 text-[10px] font-semibold text-yellow-500">
+                                  {'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}
+                                </div>
+                              </div>
+                              <p className="italic text-slate-400 leading-relaxed">"{review.text}"</p>
+                              {review.time && <span className="block text-[9px] text-slate-500 text-right">{review.time}</span>}
+                            </div>
+                          ));
+                        } catch (e) {
+                          return <p className="text-red-400 text-xs">Error parsing reviews.</p>;
+                        }
+                      })()}
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-slate-500 text-xs italic">No reviews indexed.</p>
+                )}
               </div>
 
               {/* Website scan signals */}

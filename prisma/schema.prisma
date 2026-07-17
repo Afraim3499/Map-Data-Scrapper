@@ -42,6 +42,7 @@ model Campaign {
   leads            Lead[]
   exports          Export[]
   jobs             Job[]
+  zips             CampaignZip[]
 
   @@map("campaigns")
 }
@@ -102,6 +103,10 @@ model Lead {
   closedSunday      Boolean  @default(false) @map("closed_sunday")
   closesBefore6     Boolean  @default(false) @map("closes_before_6")
   afterHoursGap     Boolean  @default(false) @map("after_hours_gap")
+  reviewsJson         String?  @map("reviews_json")
+  ownerName           String?  @map("owner_name")
+  rudeStaffMentioned  Boolean  @default(false) @map("rude_staff_mentioned")
+  noPickUpMentioned   Boolean  @default(false) @map("no_pick_up_mentioned")
   createdAt         DateTime @default(now()) @map("created_at")
   updatedAt         DateTime @updatedAt @map("updated_at")
 
@@ -209,6 +214,7 @@ model Setting {
   id                          String   @id @default("default")
   googleMapsApiKey            String?  @map("google_maps_api_key")
   maxZipsPerCampaign          Int      @default(10) @map("max_zips_per_campaign")
+  zipCodeOffset               Int      @default(0) @map("zip_code_offset")
   maxQueriesPerZip            Int      @default(5) @map("max_queries_per_zip")
   maxWebsitesScannedPerMinute Int      @default(10) @map("max_websites_scanned_per_minute")
   websiteTimeoutSeconds       Int      @default(15) @map("website_timeout_seconds")
@@ -220,4 +226,17 @@ model Setting {
   updatedAt                   DateTime @updatedAt @map("updated_at")
 
   @@map("settings")
+}
+
+model CampaignZip {
+  id          String    @id @default(uuid())
+  campaignId  String    @map("campaign_id")
+  campaign    Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  zipCode     String    @map("zip_code")
+  status      String    @default("pending") // pending, processing, completed, failed
+  leadsFound  Int       @default(0) @map("leads_found")
+  completedAt DateTime? @map("completed_at")
+
+  @@unique([campaignId, zipCode])
+  @@map("campaign_zips")
 }

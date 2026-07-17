@@ -64,9 +64,16 @@ export async function GET(
       }
     });
 
+    // Get zip code list
+    const zips = await prisma.campaignZip.findMany({
+      where: { campaignId: id },
+      orderBy: { zipCode: 'asc' },
+    });
+
     return NextResponse.json({
       campaign,
       logs,
+      zips,
       stats: {
         leads: leadCount,
         qualified: qualifiedCount,

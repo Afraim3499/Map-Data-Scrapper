@@ -42,31 +42,66 @@ export async function processCampaignJob(jobId: string) {
     const settings = await prisma.setting.findUnique({ where: { id: 'default' } });
     const maxZips = settings?.maxZipsPerCampaign ?? 10;
     const maxQueries = settings?.maxQueriesPerZip ?? 5;
+    const zipOffset = settings?.zipCodeOffset ?? 0;
 
     // --- PHASE 1: PLACE DISCOVERY ---
-    const zips = getZipsForState(campaign.state, maxZips);
     const queries = campaign.searchQueries.split(',').map(q => q.trim()).slice(0, maxQueries);
+
+    // Fetch existing zips in DB
+    let dbZips = await prisma.campaignZip.findMany({
+      where: { campaignId: campaign.id },
+      orderBy: { zipCode: 'asc' },
+    });
+
+    // If none exist, populate them
+    if (dbZips.length === 0) {
+      const zipsToCreate = getZipsForState(campaign.state, maxZips, zipOffset);
+      if (zipsToCreate.length > 0) {
+        await prisma.campaignZip.createMany({
+          data: zipsToCreate.map(zip => ({
+            campaignId: campaign.id,
+            zipCode: zip,
+            status: 'pending',
+          })),
+          skipDuplicates: true,
+        });
+        dbZips = await prisma.campaignZip.findMany({
+          where: { campaignId: campaign.id },
+          orderBy: { zipCode: 'asc' },
+        });
+      }
+    }
 
     await prisma.campaign.update({
       where: { id: campaign.id },
-      data: { totalZips: zips.length },
+      data: { totalZips: dbZips.length },
     });
 
-    let totalPlaceIdsFound = 0;
+    // Correctly initialize totalPlaceIdsFound to the campaign's current totalPlaceIds (retaining duplicates count)
+    let totalPlaceIdsFound = campaign.totalPlaceIds;
     
-    // Loop through ZIPs + queries (resume support)
-    for (let i = campaign.processedZips; i < zips.length; i++) {
-      const zip = zips[i];
-      
-      // Check if campaign was paused/cancelled
+    // Loop through ZIPs + queries
+    for (let i = 0; i < dbZips.length; i++) {
+      const dbZip = dbZips[i];
+      if (dbZip.status === 'completed') continue;
+
+      // Check pause/cancel
       const currentCampaignState = await prisma.campaign.findUnique({ where: { id: campaign.id } });
       if (currentCampaignState?.status === 'paused' || currentCampaignState?.status === 'cancelled') {
         throw new Error(`Campaign was ${currentCampaignState.status}`);
       }
 
+      // Mark this ZIP code as processing
+      await prisma.campaignZip.update({
+        where: { id: dbZip.id },
+        data: { status: 'processing' },
+      });
+
+      let zipLeadsCount = 0;
+
       for (const query of queries) {
-        const discovered = await discoverPlaces(query, zip, campaign.id);
-        totalPlaceIdsFound += discovered.length;
+        const discovered = await discoverPlaces(query, dbZip.zipCode, campaign.id);
+        zipLeadsCount += discovered.length;
 
         for (const place of discovered) {
           // Check duplicate
@@ -85,7 +120,7 @@ export async function processCampaignJob(jobId: string) {
                 campaignId: campaign.id,
                 placeId: place.placeId,
                 query,
-                zipCode: zip,
+                zipCode: dbZip.zipCode,
                 state: campaign.state,
               },
             });
@@ -93,11 +128,27 @@ export async function processCampaignJob(jobId: string) {
         }
       }
 
+      totalPlaceIdsFound += zipLeadsCount;
+
+      // Mark this ZIP code as completed
+      await prisma.campaignZip.update({
+        where: { id: dbZip.id },
+        data: { 
+          status: 'completed',
+          leadsFound: zipLeadsCount,
+          completedAt: new Date(),
+        },
+      });
+
+      const completedCount = await prisma.campaignZip.count({
+        where: { campaignId: campaign.id, status: 'completed' },
+      });
+
       // Update progress
       await prisma.campaign.update({
         where: { id: campaign.id },
         data: {
-          processedZips: i + 1,
+          processedZips: completedCount,
           totalPlaceIds: totalPlaceIdsFound,
         },
       });
@@ -197,6 +248,10 @@ export async function processCampaignJob(jobId: string) {
             closedSunday: details.closedSunday,
             closesBefore6: details.closesBefore6,
             afterHoursGap: details.afterHoursGap,
+            reviewsJson: details.reviewsJson,
+            ownerName: details.ownerName,
+            rudeStaffMentioned: details.rudeStaffMentioned,
+            noPickUpMentioned: details.noPickUpMentioned,
           },
         });
         leadIds.push(newLead.id);
@@ -453,8 +508,9 @@ export async function processCampaignTick(campaignId: string) {
     const settings = await prisma.setting.findUnique({ where: { id: 'default' } });
     const maxZips = settings?.maxZipsPerCampaign ?? 10;
     const maxQueries = settings?.maxQueriesPerZip ?? 5;
+    const zipOffset = settings?.zipCodeOffset ?? 0;
 
-    const zips = getZipsForState(campaign.state, maxZips);
+    const zips = getZipsForState(campaign.state, maxZips, zipOffset);
     const queries = campaign.searchQueries.split(',').map(q => q.trim()).slice(0, maxQueries);
 
     // 1. QUEUED -> DISCOVERING PLACES

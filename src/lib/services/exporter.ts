@@ -68,7 +68,8 @@ export async function exportCampaignLeads(campaignId: string, exportType: string
         'Booking Flow Strength', 'Text Capability', 'Text Evidence', 'Chat Widget Found', 'Chat Widget Name',
         'Form Found', 'Form Type', 'Detected Software', 'Software Confidence', 'Software Evidence', 'Evidence URL',
         'TorQi Fit Score', 'Lead Grade', 'Data Confidence Score', 'Primary Bucket', 'Secondary Buckets',
-        'Sales Hook', 'Opening Line', 'Outreach Priority'
+        'Sales Hook', 'Opening Line', 'Outreach Priority',
+        'Owner Name', 'Rude Staff Mentioned', 'No Pick Up Mentioned'
       ];
       rows = formattedLeads.map(({ lead, scan, score }) => [
         lead.placeId, lead.businessName, lead.phoneRaw || '', lead.phoneFormatted || '', lead.website || '',
@@ -80,22 +81,24 @@ export async function exportCampaignLeads(campaignId: string, exportType: string
         scan.bookingFlowStrength || '', scan.textCapability || '', scan.textEvidence || '', scan.chatWidgetFound ? 'Yes' : 'No', scan.chatWidgetName || '',
         scan.formFound ? 'Yes' : 'No', scan.formType || '', scan.detectedSoftware || '', scan.softwareConfidence || '', scan.softwareEvidence || '', scan.evidenceUrl || '',
         score.torqiFitScore?.toString() || '0', score.leadGrade || 'D', score.dataConfidenceScore?.toString() || '0', score.primaryBucket || '', score.secondaryBuckets || '',
-        score.salesHook || '', score.openingLine || '', score.outreachPriority || 'Low'
+        score.salesHook || '', score.openingLine || '', score.outreachPriority || 'Low',
+        lead.ownerName || '', lead.rudeStaffMentioned ? 'Yes' : 'No', lead.noPickUpMentioned ? 'Yes' : 'No'
       ]);
       break;
 
     case 'sales':
       headers = [
         'Business Name', 'Phone Number', 'Website', 'City', 'State', 'Rating', 'Review Count',
-        'Hours Summary', 'Closes At', 'Closed Weekends', 'Primary Bucket', 'TorQi Fit Score',
-        'Lead Grade', 'Software Detected', 'Sales Hook', 'Opening Line', 'Evidence', 'Google Maps URL'
+        'Hours Summary', 'Closes At', 'Closed Weekends', 'Owner Name', 'Rude Staff Mentioned', 'No Pick Up Mentioned',
+        'Primary Bucket', 'TorQi Fit Score', 'Lead Grade', 'Software Detected', 'Sales Hook', 'Opening Line', 'Evidence', 'Google Maps URL'
       ];
       rows = formattedLeads.map(({ lead, scan, score }) => {
         const closedWeekends = lead.closedSaturday && lead.closedSunday ? 'Yes' : (lead.closedSaturday || lead.closedSunday ? 'Partial' : 'No');
         const evidence = scan.softwareEvidence || scan.textEvidence || 'No digital signals detected.';
         return [
           lead.businessName, lead.phoneFormatted || lead.phoneRaw || '', lead.website || '', lead.city || '', lead.state || '', lead.rating?.toString() || '', lead.reviewCount?.toString() || '',
-          lead.hoursSummary || '', lead.weekdayCloseTime || '', closedWeekends, score.primaryBucket || '', score.torqiFitScore?.toString() || '0',
+          lead.hoursSummary || '', lead.weekdayCloseTime || '', closedWeekends, lead.ownerName || '', lead.rudeStaffMentioned ? 'Yes' : 'No', lead.noPickUpMentioned ? 'Yes' : 'No',
+          score.primaryBucket || '', score.torqiFitScore?.toString() || '0',
           score.leadGrade || 'D', scan.detectedSoftware || 'None', score.salesHook || '', score.openingLine || '', evidence, lead.googleMapsUrl || ''
         ];
       });
@@ -105,12 +108,13 @@ export async function exportCampaignLeads(campaignId: string, exportType: string
       headers = [
         'Company Name', 'Phone', 'Website', 'Address', 'City', 'State', 'ZIP',
         'Lead Source', 'Lead Category', 'Lead Score', 'Lead Grade', 'Primary Pain Point',
-        'Detected Software', 'Notes', 'Owner', 'Status'
+        'Detected Software', 'Notes', 'Owner', 'Status', 'Rude Staff Mentioned', 'No Pick Up Mentioned'
       ];
       rows = formattedLeads.map(({ lead, scan, score }) => [
         lead.businessName, lead.phoneFormatted || lead.phoneRaw || '', lead.website || '', lead.address || '', lead.city || '', lead.state || '', lead.zip || '',
         'TorQi Territory Builder', campaign.businessCategory, score.torqiFitScore?.toString() || '0', score.leadGrade || 'D', score.primaryBucket || 'Unknown Gaps',
-        scan.detectedSoftware || 'None', score.salesHook || 'Lead discovered during territory building scan.', '', 'New'
+        scan.detectedSoftware || 'None', score.salesHook || 'Lead discovered during territory building scan.', lead.ownerName || '', 'New',
+        lead.rudeStaffMentioned ? 'Yes' : 'No', lead.noPickUpMentioned ? 'Yes' : 'No'
       ]);
       break;
 

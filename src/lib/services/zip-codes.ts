@@ -68,17 +68,17 @@ export const STATE_ZIPS: Record<string, string[]> = {
   Wyoming: ['82001', '82601', '83001', '82070', '82414', '82716', '82501', '82801'],
 };
 
-export function getZipsForState(stateName: string, maxResults: number = 10): string[] {
+export function getZipsForState(stateName: string, maxResults: number = 10, offset: number = 0): string[] {
   const abbr = STATE_NAME_TO_ABBR[stateName];
   if (abbr) {
     const records = zipcodes.lookupByState(abbr);
     if (records && records.length > 0) {
-      // Sort ZIP codes numerically/alphabetically and slice
-      return records.map(r => r.zip).sort().slice(0, maxResults);
+      // Sort ZIP codes numerically/alphabetically and slice with offset
+      return records.map(r => r.zip).sort().slice(offset, offset + maxResults);
     }
   }
 
   // Fallback to static list
   const zips = STATE_ZIPS[stateName] || [];
-  return zips.slice(0, maxResults);
+  return zips.slice(offset, offset + maxResults);
 }

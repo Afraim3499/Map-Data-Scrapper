@@ -23,6 +23,9 @@ export function calculateLeadScore(
     closedSunday?: boolean;
     weekdayCloseTime?: string | null;
     hoursSummary?: string | null;
+    rudeStaffMentioned?: boolean | null;
+    noPickUpMentioned?: boolean | null;
+    ownerName?: string | null;
   },
   scan: {
     scanStatus?: string | null;
@@ -103,8 +106,19 @@ export function calculateLeadScore(
     rawScore += 5;
     breakdown['business_operational'] = 5;
   }
+
+  // Bonus Points from Maps Reviews (high pain points for TorQi automated receptionist)
+  if (lead.noPickUpMentioned) {
+    rawScore += 20;
+    breakdown['review_phone_pickup_issues'] = 20;
+  }
+
+  if (lead.rudeStaffMentioned) {
+    rawScore += 15;
+    breakdown['review_rude_staff'] = 15;
+  }
   
-  // Max possible raw points is 110. Let's normalize it to 100.
+  // Normalization capped at 100
   const torqiFitScore = Math.min(100, Math.round((rawScore / 110) * 100));
 
   // 2. Assign Lead Grade
@@ -115,12 +129,6 @@ export function calculateLeadScore(
   else if (torqiFitScore >= 40) leadGrade = 'C';
 
   // 3. Data Confidence Score
-  // Phone found: +20
-  // Website found: +20
-  // Hours found: +20
-  // Rating/review count found: +10
-  // Website scan successful: +20
-  // Software evidence found: +10
   let dataConfidenceScore = 0;
   if (lead.phoneRaw || lead.phoneFormatted) dataConfidenceScore += 20;
   if (lead.website) dataConfidenceScore += 20;
@@ -131,6 +139,29 @@ export function calculateLeadScore(
 
   // 4. Determine Lead Buckets and hooks
   const buckets: { name: string; hook: string; openingLine: string }[] = [];
+
+  // Bucket: Review-Evidenced Communication Issues
+  if (lead.noPickUpMentioned || lead.rudeStaffMentioned) {
+    let hook = 'Customer reviews specifically mention communication issues.';
+    let opening = 'Hi, ';
+    
+    if (lead.noPickUpMentioned && lead.rudeStaffMentioned) {
+      hook = 'Reviews indicate both rude front-desk experiences and unanswered calls. TorQi eliminates these friction points with friendly, instant AI reception.';
+      opening = 'Hi, I noticed some online reviews where customers mentioned they had trouble getting someone on the phone and encountered some front-desk frustration. We help busy shops ensure 100% of calls are answered professionally.';
+    } else if (lead.noPickUpMentioned) {
+      hook = 'Multiple reviews mention the shop is hard to reach or doesn\'t answer calls. TorQi captures 100% of missed calls and after-hours callers.';
+      opening = 'Hi, I saw in some reviews that customers mentioned it was a bit hard to reach you by phone. We help busy shops make sure no customer call goes unanswered, even during peak rush hours.';
+    } else {
+      hook = 'Reviews note rude staff or communication issues at the front desk. TorQi\'s conversational AI answers routine inquiries with consistent professionalism.';
+      opening = 'Hi, I saw some customer feedback online regarding front-office communication. We provide shops with automated reception tools to support your team and ensure a polished customer experience.';
+    }
+
+    buckets.push({
+      name: 'Review-Evidenced Communication Issues',
+      hook,
+      openingLine: opening,
+    });
+  }
 
   // Bucket 1: After-Hours Revenue Leak
   if (lead.closesBefore6 || lead.closedSaturday || lead.closedSunday) {
@@ -178,18 +209,24 @@ export function calculateLeadScore(
     });
   }
 
+  // Personalize with Owner Name if found
+  if (lead.ownerName) {
+    buckets.forEach(b => {
+      if (b.openingLine.startsWith('Hi, ')) {
+        b.openingLine = b.openingLine.replace('Hi, ', `Hi, I was hoping to connect with ${lead.ownerName}. I noticed `);
+      }
+    });
+  }
+
   let primaryBucket: string | null = null;
   let secondaryList: string[] = [];
   let salesHook: string | null = null;
   let openingLine: string | null = null;
 
   if (buckets.length > 0) {
-    // Primary bucket is the first one matched
     primaryBucket = buckets[0].name;
     salesHook = buckets[0].hook;
     openingLine = buckets[0].openingLine;
-    
-    // Remaining are secondary buckets
     secondaryList = buckets.slice(1).map(b => b.name);
   }
 

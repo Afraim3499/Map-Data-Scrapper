@@ -189,7 +189,7 @@ a.text-white,
 [class*="bg-[#04060b]"] *,
 pre,
 code,
-.font-mono {
+.font-mono:not(input):not(textarea):not(select) {
   color: #F1F5F9 !important;
 }
 
@@ -272,6 +272,18 @@ input, select, textarea {
   background-color: #FFFFFF !important;
   color: #0F172A !important;
   border: 1px solid #CBD5E1 !important;
+}
+
+input.text-white,
+select.text-white,
+textarea.text-white,
+input[class*="text-white"],
+select[class*="text-white"],
+textarea[class*="text-white"],
+input.font-mono,
+select.font-mono,
+textarea.font-mono {
+  color: #0F172A !important;
 }
 
 input::placeholder {

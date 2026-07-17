@@ -45,3 +45,8 @@ next-env.d.ts
 # credentials and local assets
 Supabase
 torqi logo.jpg
+
+# scratch/logs
+/brain/
+*.csv
+*.xlsx

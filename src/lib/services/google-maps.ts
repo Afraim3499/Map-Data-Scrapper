@@ -1,4 +1,5 @@
 import { prisma } from '../db';
+import zipcodes from 'zipcodes';
 
 export interface PlaceDiscoveryResult {
   placeId: string;
@@ -43,6 +44,10 @@ export interface PlaceDetailsResult {
   closedSunday: boolean;
   closesBefore6: boolean;
   afterHoursGap: boolean;
+  reviewsJson: string | null;
+  ownerName: string | null;
+  rudeStaffMentioned: boolean;
+  noPickUpMentioned: boolean;
 }
 
 // Normalize US phone numbers to (XXX) XXX-XXXX format
@@ -127,8 +132,9 @@ export function parseOpeningHours(hoursData: any): Partial<PlaceDetailsResult> {
   if (!hoursData) return result;
 
   // Get weekday text summary
-  if (hoursData.weekdayText && Array.isArray(hoursData.weekdayText)) {
-    result.hoursSummary = hoursData.weekdayText.join(', ');
+  const weekdayText = hoursData.weekdayDescriptions || hoursData.weekdayText;
+  if (weekdayText && Array.isArray(weekdayText)) {
+    result.hoursSummary = weekdayText.join(', ');
   }
 
   const periods = hoursData.periods;
@@ -221,6 +227,24 @@ export async function discoverPlaces(query: string, zipCode: string, campaignId:
   }
 
   try {
+    const zipInfo = zipcodes.lookup(zipCode);
+    const body: any = {
+      textQuery,
+      regionCode: 'US',
+    };
+
+    if (zipInfo && zipInfo.latitude && zipInfo.longitude) {
+      body.locationBias = {
+        circle: {
+          center: {
+            latitude: zipInfo.latitude,
+            longitude: zipInfo.longitude,
+          },
+          radius: 20000, // 20km radius around the ZIP code center
+        },
+      };
+    }
+
     const response = await fetch('https://places.googleapis.com/v1/places:searchText', {
       method: 'POST',
       headers: {
@@ -228,7 +252,7 @@ export async function discoverPlaces(query: string, zipCode: string, campaignId:
         'X-Goog-Api-Key': apiKey,
         'X-Goog-FieldMask': 'places.id,nextPageToken',
       },
-      body: JSON.stringify({ textQuery }),
+      body: JSON.stringify(body),
     });
 
     if (!response.ok) {
@@ -265,6 +289,81 @@ export async function discoverPlaces(query: string, zipCode: string, campaignId:
   }
 }
 
+export function analyzeReviews(reviews: any[] | null): {
+  reviewsJson: string | null;
+  ownerName: string | null;
+  rudeStaffMentioned: boolean;
+  noPickUpMentioned: boolean;
+} {
+  const result = {
+    reviewsJson: null as string | null,
+    ownerName: null as string | null,
+    rudeStaffMentioned: false,
+    noPickUpMentioned: false,
+  };
+
+  if (!reviews || !Array.isArray(reviews) || reviews.length === 0) {
+    return result;
+  }
+
+  // Store the raw reviews list as a JSON string
+  result.reviewsJson = JSON.stringify(reviews.map(r => ({
+    author: r.authorAttribution?.displayName || 'Anonymous',
+    rating: r.rating || 0,
+    text: r.text?.text || '',
+    time: r.relativePublishTimeDescription || '',
+  })));
+
+  // Combine all review texts for keyword analysis
+  const combinedText = reviews
+    .map(r => r.text?.text || '')
+    .join(' ')
+    .toLowerCase();
+
+  // 1. Check for rude staff mentions
+  const rudeKeywords = [
+    'rude', 'unfriendly', 'unprofessional', 'disrespectful', 
+    'attitude', 'mean', 'impolite', 'insulting', 'hostile'
+  ];
+  result.rudeStaffMentioned = rudeKeywords.some(keyword => combinedText.includes(keyword));
+
+  // 2. Check for phone pickup issues (critical for TorQi!)
+  const noPickUpKeywords = [
+    'no answer', 'never answer', 'dont answer', "don't answer", 'doesnt answer', "doesn't answer",
+    'didnt pick', "didn't pick", 'dont pick', "don't pick", 'no pick up', 'not pick up',
+    'busy tone', 'never picked', 'hard to reach', 'cannot reach', 'no response',
+    'phone ring', 'straight to voicemail', 'voicemail full'
+  ];
+  result.noPickUpMentioned = noPickUpKeywords.some(keyword => combinedText.includes(keyword));
+
+  // 3. Try to extract owner's name using regex
+  // Match patterns like "owner was [Name]", "owner [Name]", "owner, [Name]", "[Name] (the owner)"
+  const ownerRegexes = [
+    /owner\s+(?:is|was|named|called)?\s*([A-Z][a-z]+)/,
+    /([A-Z][a-z]+)\s+the\s+owner/,
+    /owner,\s*([A-Z][a-z]+)/,
+    /talked\s+to\s+([A-Z][a-z]+)\s+the\s+owner/
+  ];
+
+  for (const r of reviews) {
+    const rawText = r.text?.text || '';
+    for (const regex of ownerRegexes) {
+      const match = rawText.match(regex);
+      if (match && match[1]) {
+        const detected = match[1].trim();
+        const commonWords = new Set(['The', 'He', 'She', 'They', 'It', 'A', 'An', 'This', 'That', 'To', 'And', 'We']);
+        if (!commonWords.has(detected)) {
+          result.ownerName = detected;
+          break;
+        }
+      }
+    }
+    if (result.ownerName) break;
+  }
+
+  return result;
+}
+
 // Google Place Details (New) API Call
 export async function getPlaceDetails(placeId: string, campaignId: string): Promise<PlaceDetailsResult | null> {
   const apiKey = await getApiKey();
@@ -280,7 +379,7 @@ export async function getPlaceDetails(placeId: string, campaignId: string): Prom
       headers: {
         'Content-Type': 'application/json',
         'X-Goog-Api-Key': apiKey,
-        'X-Goog-FieldMask': 'id,displayName,formattedAddress,nationalPhoneNumber,regularOpeningHours,rating,userRatingCount,websiteUri,businessStatus,googleMapsUri,location,primaryType,types',
+        'X-Goog-FieldMask': 'id,displayName,formattedAddress,nationalPhoneNumber,regularOpeningHours,rating,userRatingCount,websiteUri,businessStatus,googleMapsUri,location,primaryType,types,reviews',
       },
     });
 
@@ -296,6 +395,7 @@ export async function getPlaceDetails(placeId: string, campaignId: string): Prom
     const formattedPhone = normalizeUSPhoneNumber(data.nationalPhoneNumber);
     const parsedAddr = parseAddress(data.formattedAddress);
     const parsedHours = parseOpeningHours(data.regularOpeningHours);
+    const parsedReviews = analyzeReviews(data.reviews);
 
     const result: PlaceDetailsResult = {
       placeId: data.id,
@@ -336,6 +436,10 @@ export async function getPlaceDetails(placeId: string, campaignId: string): Prom
       closedSunday: parsedHours.closedSunday ?? true,
       closesBefore6: parsedHours.closesBefore6 ?? false,
       afterHoursGap: parsedHours.afterHoursGap ?? false,
+      reviewsJson: parsedReviews.reviewsJson,
+      ownerName: parsedReviews.ownerName,
+      rudeStaffMentioned: parsedReviews.rudeStaffMentioned,
+      noPickUpMentioned: parsedReviews.noPickUpMentioned,
     };
 
     return result;
@@ -428,6 +532,43 @@ function generateMockDetails(placeId: string): PlaceDetailsResult {
 
   const phoneRaw = `+14045550${Math.floor(Math.random() * 900) + 100}`;
 
+  // Randomly simulate reviews
+  const mockReviews = [];
+  let ownerName = null;
+  let rudeStaffMentioned = false;
+  let noPickUpMentioned = false;
+
+  if (Math.random() < 0.4) {
+    const names = ['John', 'Mike', 'Steve', 'Bob', 'Carlos', 'Dave', 'Sarah', 'Jessica'];
+    ownerName = names[Math.floor(Math.random() * names.length)];
+    mockReviews.push({
+      authorAttribution: { displayName: 'Happy Customer' },
+      rating: 5,
+      text: { text: `The owner ${ownerName} was extremely helpful and gave me a great deal!` },
+      relativePublishTimeDescription: '2 weeks ago'
+    });
+  }
+
+  if (Math.random() < 0.25) {
+    rudeStaffMentioned = true;
+    mockReviews.push({
+      authorAttribution: { displayName: 'Disappointed client' },
+      rating: 1,
+      text: { text: 'The guy at the front desk had a horrible attitude and was incredibly rude.' },
+      relativePublishTimeDescription: '1 month ago'
+    });
+  }
+
+  if (Math.random() < 0.3) {
+    noPickUpMentioned = true;
+    mockReviews.push({
+      authorAttribution: { displayName: 'Frustrated Caller' },
+      rating: 2,
+      text: { text: 'Called them three times today, they never pick up the phone! Just goes straight to voicemail.' },
+      relativePublishTimeDescription: '3 days ago'
+    });
+  }
+
   return {
     placeId,
     businessName: shopName,
@@ -467,5 +608,14 @@ function generateMockDetails(placeId: string): PlaceDetailsResult {
     closedSunday,
     closesBefore6: closeHour <= 18,
     afterHoursGap: true,
+    reviewsJson: mockReviews.length > 0 ? JSON.stringify(mockReviews.map(r => ({
+      author: r.authorAttribution.displayName,
+      rating: r.rating,
+      text: r.text.text,
+      time: r.relativePublishTimeDescription
+    }))) : null,
+    ownerName,
+    rudeStaffMentioned,
+    noPickUpMentioned,
   };
 }
